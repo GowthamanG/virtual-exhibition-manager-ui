@@ -16,6 +16,13 @@
             </button>
         </div>
 
+      <div>
+        <button mat-stroked-button color="red" (click)="addNewCorridor()">
+          <mat-icon>add</mat-icon>
+          Add new Corridor
+        </button>
+      </div>
+
 
         <div class="dashboard">
             <div *ngFor="let room of (exhibition|async).rooms" (click)="roomClicked($event, room)" [className]="(inspected|async)==room ? 'room-widget selected' : 'room-widget'">

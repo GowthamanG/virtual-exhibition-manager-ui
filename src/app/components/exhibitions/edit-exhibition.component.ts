@@ -7,6 +7,7 @@ import {Exhibit} from '../../model/implementations/exhibit.model';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
+import {Corridor} from "../../model/implementations/corridor.model";
 
 @Component({
     selector: 'app-edit-exhibitions',
@@ -73,6 +74,14 @@ export class EditExhibitionComponent {
      */
     public addNewRoom() {
         this._editor.current.addRoom(Room.empty());
+    }
+
+  /**
+   * Creates and adds a new {Room} to the current {Exhibition}.
+   * TODO scale to other rooms
+   */
+  public addNewCorridor() {
+      this._editor.current.addCorridor(Corridor.empty());
     }
 
     /**

@@ -149,6 +149,10 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
   public addNewRoom() {
     this._editor.current.addRoom(Room.empty());
   }
+  
+  public addNewCorridor() {
+    this._editor.current.addRoom(Room.empty());
+  }
 
   /**
    * Deletes the provided {Room} from the current {Exhibition}

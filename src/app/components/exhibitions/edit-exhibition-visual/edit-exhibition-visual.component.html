@@ -12,6 +12,8 @@
 
   <div cdkDropList #vis="cdkDropList" class="visualizer" (cdkDropListDropped)="drop($event)"></div>
 
+
+
   <div class="content" *ngIf="!!(exhibition|async)" (click)="exhibitionClicked($event)">
     <h1 class="mat-h1">Exhibition dashboard: {{(exhibition|async).name}} (ID={{(exhibition|async).shortId}})</h1>
 
@@ -22,6 +24,14 @@
       </button>
     </div>
 
+    <!-- add buton here?
+    <div>
+      <button mat-stroked-button color="red" (click)="addNewCorridor()">
+        <mat-icon>add</mat-icon>
+        Add new Corridor
+      </button>
+    </div>
+    -->
 
     <div class="dashboard">
       <div *ngFor="let room of (exhibition|async).rooms" (click)="roomClicked($event, room)" [className]="(inspected|async)==room ? 'room-widget selected' : 'room-widget'">

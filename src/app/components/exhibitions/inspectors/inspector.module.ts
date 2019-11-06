@@ -9,10 +9,11 @@ import {RoomCanvasComponent} from './room/room-canvas.component';
 import {WallInspectorComponent} from './wall/wall-inspector.component';
 import {WallCanvasComponent} from './wall/wall-canvas.component';
 import {ExhibitInspectorComponent} from './exhibit/exhibit-inspector.component';
-
+import {CorridorInspectorComponent} from './corridor/corridor-inspector.component';
+import {CorridorCanvasComponent} from './corridor/corridor-canvas.component';
 @NgModule({
-    declarations: [ ExhibitionInspectorComponent, RoomInspectorComponent, RoomCanvasComponent, WallInspectorComponent, WallCanvasComponent, ExhibitInspectorComponent ],
+    declarations: [ ExhibitionInspectorComponent, RoomInspectorComponent, RoomCanvasComponent, CorridorInspectorComponent, CorridorCanvasComponent, WallInspectorComponent, WallCanvasComponent, ExhibitInspectorComponent ],
     imports: [ BrowserModule, MaterialModule, FormsModule, SharedComponentsModule ],
-    exports: [ ExhibitionInspectorComponent, RoomInspectorComponent, WallInspectorComponent, ExhibitInspectorComponent]
+    exports: [ ExhibitionInspectorComponent, RoomInspectorComponent, CorridorInspectorComponent, WallInspectorComponent, ExhibitInspectorComponent]
 })
 export class InspectorModule {}
