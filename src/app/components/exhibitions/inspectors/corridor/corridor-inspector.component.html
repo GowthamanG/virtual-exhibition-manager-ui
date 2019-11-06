@@ -1,0 +1,42 @@
+
+<div class="full-width" [style.display]="'flex'" [style.justify-content]="'space-around'">
+    <app-corridor-canvas [corridor]="corridor" ></app-corridor-canvas>
+</div>
+
+<hr/>
+
+<h4 class="mat-h4">General properties</h4>
+
+
+<mat-form-field class="full-width">
+    <input matInput placeholder="Exhibition" [value]="corridor._belongsTo.name" disabled>
+</mat-form-field>
+
+<mat-form-field class="full-width">
+    <input matInput placeholder="Corridor name" [(ngModel)]="corridor.text">
+</mat-form-field>
+
+<mat-form-field class="full-width">
+    <mat-select placeholder="Floor (Texture)" [(ngModel)]="corridor.floor">
+        <mat-option *ngFor="let texture of textures" [value]="texture">
+            {{texture}}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+<mat-form-field class="full-width">
+    <mat-select placeholder="Ceiling (Texture)" [(ngModel)]="corridor.ceiling">
+        <mat-option *ngFor="let texture of textures" [value]="texture">
+            {{texture}}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+<h4 class="mat-h4">Corridor geometry</h4>
+
+<app-vector3f-input [vector]="corridor.position" [name]="'Position'"></app-vector3f-input>
+
+<app-vector3f-input [vector]="corridor.size" [name]="'Size'" [labels]="['Width', 'Height', 'Depth']"></app-vector3f-input>
+
+<h4 class="mat-h4">Entrypoint</h4>
+<app-vector3f-input [vector]="corridor.entrypoint" [name]="'Entrypoint'" [show]="[true, false, true]" [labels]="['Entrypoint (x)', null, 'Entrypoint (y)']"></app-vector3f-input>
