@@ -7,7 +7,7 @@ import {Exhibit} from '../../model/implementations/exhibit.model';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {Corridor} from "../../model/implementations/corridor.model";
+import {Corridor} from '../../model/implementations/corridor.model';
 
 @Component({
     selector: 'app-edit-exhibitions',
@@ -77,7 +77,7 @@ export class EditExhibitionComponent {
     }
 
   /**
-   * Creates and adds a new {Room} to the current {Exhibition}.
+   * Creates and adds a new {Corridor} to the current {Exhibition}.
    * TODO scale to other rooms
    */
   public addNewCorridor() {
@@ -109,8 +109,13 @@ export class EditExhibitionComponent {
                     return 'Room';
                 } else if (i instanceof Wall) {
                     return 'Wall';
-                } else {
+                } else { // @ts-ignore
+                  // @ts-ignore
+                  if (i instanceof Corridor) {
+                    return 'Corridor';
+                  } else {
                     return 'Nothing';
+                  }
                 }
             })
         );
@@ -145,10 +150,20 @@ export class EditExhibitionComponent {
     }
 
     /**
+    *
+    */
+    get isSelectedCorridor() {
+      return this.inspected.pipe(map(e => e instanceof Corridor));
+    }
+
+  /**
      *
      * @param event
+    // tslint:disable-next-line:no-redundant-jsdoc
      * @param rw
+   // tslint:disable-next-line:no-redundant-jsdoc
      * @param e
+   // tslint:disable-next-line:no-redundant-jsdoc
      */
     public removeExhibitClicked(event: MouseEvent, e: Exhibit) {
         e._belongsTo.removeExhibit(e);
@@ -158,9 +173,8 @@ export class EditExhibitionComponent {
     /**
      * Called whenever a user clicks a {Exhibition}.
      * @param event The mouse event.
-     * @param exhibition The {Exhibition} that has been clicked.
      */
-    public exhibitionClicked(event: MouseEvent, exhibition: Exhibition) {
+    public exhibitionClicked(event: MouseEvent) {
         this._editor.inspected = this._editor.current;
         event.stopPropagation();
     }

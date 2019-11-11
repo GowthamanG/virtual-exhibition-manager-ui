@@ -19,18 +19,25 @@ export class Corridor implements IRoom {
   public _belongsTo: (Exhibition | null);
 
   /**stores the rooms which are conected by this corridor*/
-  public connects: Room[]=[];
+  public connects: Room[] = [];
 
   /**
    * Default constructor for @type {Room}.
    *
    * @param text
+   // tslint:disable-next-line:no-redundant-jsdoc
    * @param ambient
+   // tslint:disable-next-line:no-redundant-jsdoc
    * @param ceiling
+   // tslint:disable-next-line:no-redundant-jsdoc
    * @param floor
+   // tslint:disable-next-line:no-redundant-jsdoc
    * @param position
+   // tslint:disable-next-line:no-redundant-jsdoc
    * @param entrypoint
+   // tslint:disable-next-line:no-redundant-jsdoc
    * @param size
+   // tslint:disable-next-line:no-redundant-jsdoc
    */
   constructor(public text: string, public ambient: string, public ceiling: string, public floor: string,
               public position: Vector3f, public entrypoint: Vector3f, public size: Vector3f) {}
