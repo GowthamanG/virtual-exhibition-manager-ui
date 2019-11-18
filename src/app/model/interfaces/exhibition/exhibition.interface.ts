@@ -1,5 +1,6 @@
 import {IRoom} from '../room/room.interface';
 import {ObjectId} from './objectid.interface';
+import {ICorridor} from '../corridors/corridor.interface';
 
 export interface IExhibition {
     id: ObjectId;
@@ -7,4 +8,5 @@ export interface IExhibition {
     key: string;
     description: string;
     rooms: IRoom[];
+    corridors: ICorridor[];
 }

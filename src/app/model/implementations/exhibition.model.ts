@@ -10,6 +10,7 @@ export class Exhibition implements IExhibition {
 
   /** List of @type {Rooms} for this @type {Exhibition}. */
   public rooms: Room[] = [];
+  public corridors: Corridor[] = [];
 
   /**
    * Copies a @type {IExhibition} to a new @type {Exhibition} object.
@@ -77,6 +78,18 @@ export class Exhibition implements IExhibition {
     }
     if (r > -1 && r < this.rooms.length) {
       this.rooms.splice(r, 1);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public deleteCorridor(c: (Corridor | number)) {
+    if (c instanceof Corridor) {
+      c = this.corridors.indexOf(c);
+    }
+    if (c > -1 && c < this.rooms.length) {
+      this.corridors.splice(c, 1);
       return true;
     } else {
       return false;

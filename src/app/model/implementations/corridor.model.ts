@@ -1,13 +1,15 @@
 import {IRoom} from '../interfaces/room/room.interface';
 import {Vector3f} from '../interfaces/general/vector-3f.model';
+// TODO: own wall model for corridors
 import {Wall} from './wall.model';
 import {Room} from './room.model';
 import {Exhibit} from './exhibit.model';
 import {Exhibition} from './exhibition.model';
-import {Directions} from '../interfaces/room/direction.model';
+import {Directions} from '../interfaces/corridors/direction.model';
+import {ICorridor} from '../interfaces/corridors/corridor.interface';
 
 
-export class Corridor implements IRoom {
+export class Corridor implements ICorridor {
 
   /** List of @type {Exhibit}s placed directly in this @type {Room}. */
   public exhibits: Exhibit[] = [];
