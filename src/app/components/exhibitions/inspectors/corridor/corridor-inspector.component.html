@@ -42,3 +42,19 @@
 <app-vector3f-input [vector]="corridor.entrypoint" [name]="'Entrypoint'" [show]="[true, false, true]" [labels]="['Entrypoint (x)', null, 'Entrypoint (y)']"></app-vector3f-input>
 
 <h4 class="mat-h4">Corridor connects Rooms:</h4>
+
+<mat-form-field class="full-width">
+  <mat-select placeholder="Room 1" [(ngModel)]="corridor.connects">
+    <mat-option *ngFor="let room of rooms" [value]="room">
+      {{room}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field class="full-width">
+  <mat-select placeholder="Room 2" [(ngModel)]="corridor.connects">
+    <mat-option *ngFor="let room of rooms" [value]="room">
+      {{room}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

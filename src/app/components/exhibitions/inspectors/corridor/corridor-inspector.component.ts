@@ -26,6 +26,13 @@ export class CorridorInspectorComponent {
         return this._textures;
     }
 
+    /**
+    *
+    */
+    get rooms() {
+      return this.corridor.connects;
+    }
+
 
     /**
      * Getter for the
