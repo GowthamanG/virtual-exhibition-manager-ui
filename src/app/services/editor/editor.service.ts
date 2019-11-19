@@ -6,6 +6,7 @@ import {Exhibition} from '../../model/implementations/exhibition.model';
 import {Exhibit} from '../../model/implementations/exhibit.model';
 import {Wall} from '../../model/implementations/wall.model';
 import {Room} from '../../model/implementations/room.model';
+import {Corridor} from '../../model/implementations/corridor.model';
 
 @Injectable()
 export class EditorService {
@@ -14,7 +15,7 @@ export class EditorService {
     private _activeExhibition: BehaviorSubject<Exhibition> = new BehaviorSubject(null);
 
     /** Reference to the currently inspected element. May be the Exhibition, a Room, Wall or individual Exhibit. */
-    private _inspectedElement: BehaviorSubject<(Exhibition | Room | Wall | Exhibit)> = new BehaviorSubject(null);
+    private _inspectedElement: BehaviorSubject<(Exhibition | Room | Corridor | Wall | Exhibit)> = new BehaviorSubject(null);
 
     /** A flag indicating, whether this {EditorService} has unsaved changes. */
     private _dirty: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -59,16 +60,16 @@ export class EditorService {
     /**
      * Getter for the inspected element.
      */
-    get inspected(): (Exhibition | Room | Wall | Exhibit) {
+    get inspected(): (Exhibition | Room | Corridor | Wall | Exhibit) {
         return this._inspectedElement.value;
     }
 
     /**
      * Returns an {Observable} of the inspected element.
      *
-     * @return {Observable<(Exhibition | Room | Wall | Exhibit)>}
+     * @return {Observable<(Exhibition | Room | Corridor | Wall | Exhibit)>}
      */
-    get inspectedObservable(): Observable<(Exhibition | Room | Wall | Exhibit)> {
+    get inspectedObservable(): Observable<(Exhibition | Room | Corridor | Wall | Exhibit)> {
         return this._inspectedElement.asObservable();
     }
 
@@ -77,7 +78,7 @@ export class EditorService {
      *
      * @param value The new inspected element.
      */
-    set inspected(value: (Exhibition | Room | Wall | Exhibit)) {
+    set inspected(value: (Exhibition | Room | Corridor | Wall | Exhibit)) {
         this._inspectedElement.next(value);
     }
 
@@ -102,7 +103,7 @@ export class EditorService {
             first(),
             tap(e => {
                 this._activeExhibition.next(
-                    Exhibition.copyAsProxy(e, {set: (o, p, v) => this.handleSet(o, p, v), deleteProperty: (o, t) => this.handleDelete(o, t)})
+                  Exhibition.copyAsProxy(e, {set: (o, p, v) => this.handleSet(o, p, v), deleteProperty: (o, t) => this.handleDelete(o, t)})
                 );
                 this._dirty.next(false);
             }),
@@ -122,7 +123,7 @@ export class EditorService {
             first(),
             tap( e => {
                 this._activeExhibition.next(
-                    Exhibition.copyAsProxy(e, {set: (o, p, v) => this.handleSet(o, p, v), deleteProperty: (o, t) => this.handleDelete(o, t)})
+                  Exhibition.copyAsProxy(e, {set: (o, p, v) => this.handleSet(o, p, v), deleteProperty: (o, t) => this.handleDelete(o, t)})
                 );
                 this._dirty.next(false);
             }),
