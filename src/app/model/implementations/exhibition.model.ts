@@ -1,7 +1,7 @@
 import {IExhibition} from '../interfaces/exhibition/exhibition.interface';
 import {Room} from './room.model';
 import {ObjectId} from '../interfaces/exhibition/objectid.interface';
-import {Corridor} from "./corridor.model";
+import {Corridor} from './corridor.model';
 
 /**
  *
@@ -62,7 +62,7 @@ export class Exhibition implements IExhibition {
   }
 
   public addCorridor(c: Corridor, /*rA: Room, rB: Room*/) {
-    this.rooms.push(c);
+    this.corridors.push(c);
     c._belongsTo = this;
   }
 
