@@ -3,9 +3,10 @@
         <h1 class="mat-h1">Inspector: {{(selectedType|async)}}</h1>
         <app-exhibition-inspector *ngIf="(isSelectedExhibition|async)" [exhibition]="(inspected|async)"></app-exhibition-inspector>
         <app-room-inspector *ngIf="(isSelectedRoom|async)" [room]="(inspected|async)"></app-room-inspector>
-        <app-wall-inspector *ngIf="(isSelectedWall|async)" [wall]="(inspected|async)"></app-wall-inspector>
+        <app-wall-inspector *ngIf="(isSelectedRoomWall|async)" [wall]="(inspected|async)"></app-wall-inspector>
         <app-exhibit-inspector *ngIf="(isSelectedExhibit|async)" [exhibit]="(inspected|async)"></app-exhibit-inspector>
         <app-corridor-inspector *ngIf="(isSelectedCorridor|async)" [corridor]="(inspected|async)"></app-corridor-inspector>
+        <app-wall-inspector *ngIf="(isSelectedCorridorWall|async)" [wall]="(inspected|async)"></app-wall-inspector>
     </mat-drawer>
     <div class="content" *ngIf="!!(exhibition|async)" (click)="exhibitionClicked($event)">
         <h1 class="mat-h1">Exhibition dashboard: {{(exhibition|async).name}} (ID={{(exhibition|async).shortId}})</h1>
@@ -74,9 +75,9 @@
                     </mat-nested-tree-node>
 
 
-                    <mat-nested-tree-node *matTreeNodeDef="let node; when: isWall">
+                    <mat-nested-tree-node *matTreeNodeDef="let node; when: isRoomWall">
                         <li>
-                            <div [className]="(inspected|async)==node ? 'mat-tree-node selected' : 'mat-tree-node'" (click)="wallClicked($event, node)">
+                            <div [className]="(inspected|async)==node ? 'mat-tree-node selected' : 'mat-tree-node'" (click)="roomWallClicked($event, node)">
                                 <button mat-icon-button matTreeNodeToggle>
                                     <mat-icon class="mat-icon-rtl-mirror">
                                         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
@@ -153,9 +154,9 @@
               </mat-nested-tree-node>
 
 
-              <mat-nested-tree-node *matTreeNodeDef="let node; when: isWall">
+              <mat-nested-tree-node *matTreeNodeDef="let node; when: isCorridorWall">
                 <li>
-                  <div [className]="(inspected|async)==node ? 'mat-tree-node selected' : 'mat-tree-node'" (click)="wallClicked($event, node)">
+                  <div [className]="(inspected|async)==node ? 'mat-tree-node selected' : 'mat-tree-node'" (click)="corridorWallClicked($event, node)">
                     <button mat-icon-button matTreeNodeToggle>
                       <mat-icon class="mat-icon-rtl-mirror">
                         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}

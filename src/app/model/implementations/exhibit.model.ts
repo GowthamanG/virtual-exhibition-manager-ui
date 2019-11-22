@@ -1,8 +1,8 @@
 import {IExhibit} from '../interfaces/objects/exhibit.interface';
 import {CHOType} from '../interfaces/objects/cho-type.interface';
 import {Vector3f} from '../interfaces/general/vector-3f.model';
-import {Room} from './room.model';
-import {Wall} from './wall.model';
+import {Room} from './room/room.model';
+import {Wall} from './room/wall.model';
 import {IRoom} from '../interfaces/room/room.interface';
 import {IExhibition} from '../interfaces/exhibition/exhibition.interface';
 

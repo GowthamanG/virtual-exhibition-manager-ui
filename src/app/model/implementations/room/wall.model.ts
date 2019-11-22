@@ -1,7 +1,7 @@
-import {IWall} from '../interfaces/room/wall.interface';
-import {Vector3f} from '../interfaces/general/vector-3f.model';
-import {Direction} from '../interfaces/room/direction.model';
-import {Exhibit} from './exhibit.model';
+import {IWall} from '../../interfaces/room/wall.interface';
+import {Vector3f} from '../../interfaces/general/vector-3f.model';
+import {Direction} from '../../interfaces/room/direction.model';
+import {Exhibit} from '../exhibit.model';
 import {Room} from './room.model';
 
 export class Wall implements IWall {

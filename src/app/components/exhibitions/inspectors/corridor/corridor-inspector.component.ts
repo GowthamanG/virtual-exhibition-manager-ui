@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {Corridor} from '../../../../model/implementations/corridor.model';
+import {Corridor} from '../../../../model/implementations/corridor/corridor.model';
 import {Textures} from '../../../../model/interfaces/general/textures.model';
 
 @Component({

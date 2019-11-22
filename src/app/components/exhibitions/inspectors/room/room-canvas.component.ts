@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, Input, ViewChild} from '@angular/core';
-import {Room} from '../../../../model/implementations/room.model';
+import {Room} from '../../../../model/implementations/room/room.model';
 
 @Component({
     selector: 'app-room-canvas',

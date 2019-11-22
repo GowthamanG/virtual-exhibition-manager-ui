@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, Input, ViewChild} from '@angular/core';
-import {Wall} from '../../../../model/implementations/wall.model';
+import {Wall} from '../../../../model/implementations/room/wall.model';
 import {VremApiService} from '../../../../services/http/vrem-api.service';
 
 @Component({

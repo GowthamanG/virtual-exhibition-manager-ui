@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {Room} from '../../../../model/implementations/room.model';
+import {Room} from '../../../../model/implementations/room/room.model';
 import {Textures} from '../../../../model/interfaces/general/textures.model';
 
 @Component({

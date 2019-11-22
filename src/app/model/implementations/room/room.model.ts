@@ -1,9 +1,9 @@
-import {IRoom} from '../interfaces/room/room.interface';
-import {Vector3f} from '../interfaces/general/vector-3f.model';
+import {IRoom} from '../../interfaces/room/room.interface';
+import {Vector3f} from '../../interfaces/general/vector-3f.model';
 import {Wall} from './wall.model';
-import {Exhibit} from './exhibit.model';
-import {Exhibition} from './exhibition.model';
-import {Directions} from '../interfaces/room/direction.model';
+import {Exhibit} from '../exhibit.model';
+import {Exhibition} from '../exhibition.model';
+import {Directions} from '../../interfaces/room/direction.model';
 
 export class Room implements IRoom {
 

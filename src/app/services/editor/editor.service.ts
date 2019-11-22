@@ -4,9 +4,9 @@ import {BehaviorSubject, Observable, of} from 'rxjs';
 import {catchError, first, map, tap} from 'rxjs/operators';
 import {Exhibition} from '../../model/implementations/exhibition.model';
 import {Exhibit} from '../../model/implementations/exhibit.model';
-import {Wall} from '../../model/implementations/wall.model';
-import {Room} from '../../model/implementations/room.model';
-import {Corridor} from '../../model/implementations/corridor.model';
+import {Wall} from '../../model/implementations/room/wall.model';
+import {Room} from '../../model/implementations/room/room.model';
+import {Corridor} from '../../model/implementations/corridor/corridor.model';
 
 @Injectable()
 export class EditorService {

@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {EditorService} from '../../../services/editor/editor.service';
 import {Exhibition} from '../../../model/implementations/exhibition.model';
-import {Room} from '../../../model/implementations/room.model';
-import {Wall} from '../../../model/implementations/wall.model';
+import {Room} from '../../../model/implementations/room/room.model';
+import {Wall} from '../../../model/implementations/room/wall.model';
 import {Exhibit} from '../../../model/implementations/exhibit.model';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {Observable} from 'rxjs';
@@ -149,7 +149,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
   public addNewRoom() {
     this._editor.current.addRoom(Room.empty());
   }
-  
+
   public addNewCorridor() {
     this._editor.current.addRoom(Room.empty());
   }

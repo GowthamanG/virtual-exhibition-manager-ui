@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {Textures} from '../../../../model/interfaces/general/textures.model';
-import {Wall} from '../../../../model/implementations/wall.model';
+import {Wall} from '../../../../model/implementations/room/wall.model';
 
 @Component({
     selector: 'app-wall-inspector',

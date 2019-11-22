@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, Input, ViewChild} from '@angular/core';
-import {Corridor} from '../../../../model/implementations/corridor.model';
+import {Corridor} from '../../../../model/implementations/corridor/corridor.model';
 
 @Component({
     selector: 'app-corridor-canvas',
