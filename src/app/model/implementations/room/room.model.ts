@@ -4,6 +4,7 @@ import {Wall} from './wall.model';
 import {Exhibit} from '../exhibit.model';
 import {Exhibition} from '../exhibition.model';
 import {Directions} from '../../interfaces/room/direction.model';
+import {Corridor} from '../corridor/corridor.model';
 
 export class Room implements IRoom {
 
@@ -14,7 +15,7 @@ export class Room implements IRoom {
     public walls: Wall[] = [];
 
     /** Reference to the {Exhibition} this {Room} belongs to. */
-    public _belongsTo: (Exhibition | null);
+    public _belongsTo: (Exhibition | Corridor | null);
 
     /**
      * Copies a @type {IRoom} to a new @type {Room} object.

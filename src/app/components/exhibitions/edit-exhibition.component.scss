@@ -18,6 +18,7 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-start;
+  clear: both;
 }
 
 .room-widget {
@@ -65,3 +66,10 @@
   margin-bottom: 0;
   list-style-type: none;
 }
+
+
+.btnWrapper div{
+  float:left;
+  margin: 1px;
+}
+

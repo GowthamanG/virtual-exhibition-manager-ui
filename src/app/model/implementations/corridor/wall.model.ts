@@ -100,7 +100,7 @@ export class Wall implements IWall {
   }
 
   /**
-   * The height of this {Wall}. Only defined, if it belongs to a {Room}.
+   * The height of this {Wall}. Only defined, if it belongs to a {Corridor}.
    */
   get height() {
     if (this._belongsTo) {

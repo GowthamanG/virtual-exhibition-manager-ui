@@ -1,6 +1,6 @@
 import {Vector3f} from '../general/vector-3f.model';
 import {IExhibit} from '../objects/exhibit.interface';
-import {IWall} from '../room/wall.interface';
+import {IWall} from './wall.interface';
 import {IRoom} from '../room/room.interface';
 
 export interface ICorridor {

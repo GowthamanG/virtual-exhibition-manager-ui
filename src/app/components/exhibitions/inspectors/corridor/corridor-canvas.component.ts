@@ -7,9 +7,9 @@ import {Corridor} from '../../../../model/implementations/corridor/corridor.mode
         <table>
             <tr><td colspan="3" style="text-align: center;">N</td></tr>
             <tr>
-                <td>W</td>
+                <!-- <td>W</td> -->
                 <td><canvas #canvas width="250" height="250"></canvas></td>
-                <td>E</td>
+                <!-- <td>E</td> -->
             </tr>
             <tr><td colspan="3" style="text-align: center;">S</td></tr>
         </table>
@@ -90,8 +90,8 @@ export class CorridorCanvasComponent implements AfterViewInit {
             }
 
             /* Calculate offsets. */
-            const offsetX = (cwidth - this._corridor.size.x * ds)/2;
-            const offsetY =  (cheight - this._corridor.size.z * ds)/2;
+            const offsetX = (cwidth - this._corridor.size.x * ds) / 2;
+            const offsetY =  (cheight - this._corridor.size.z * ds) / 2;
             const wallOffset = CorridorCanvasComponent.WALL_LINE_WIDTH;
 
             for (const exhibit of wall.exhibits) {
@@ -102,20 +102,25 @@ export class CorridorCanvasComponent implements AfterViewInit {
                         this._context.lineTo(offsetX + exhibit.position.x * ds + exhibit.size.y * ds, offsetY + wallOffset);
                         this._context.stroke();
                         break;
+                    /*
                     case 'EAST':
                         this._context.moveTo(cwidth - offsetX - wallOffset, offsetY + exhibit.position.x * ds);
                         this._context.lineTo(cwidth - offsetX - wallOffset, offsetY + exhibit.position.x * ds + exhibit.size.x * ds);
                         this._context.stroke();
                         break;
+                     */
                     case 'SOUTH':
                         this._context.moveTo(offsetX + exhibit.position.x * ds, cheight - offsetY - wallOffset);
                         this._context.lineTo(offsetX + exhibit.position.x * ds + exhibit.size.y * ds, cheight - offsetY - wallOffset);
                         break;
+                        /*
                     case 'WEST':
                         this._context.moveTo(offsetX + wallOffset, offsetY + exhibit.position.x * ds);
                         this._context.lineTo(offsetX + wallOffset, offsetY + exhibit.position.x * ds + exhibit.size.x * ds);
                         this._context.stroke();
                         break;
+
+                         */
                 }
                 this._context.stroke();
                 this._context.closePath();
@@ -142,21 +147,21 @@ export class CorridorCanvasComponent implements AfterViewInit {
 
         if (this._corridor.size.x > this._corridor.size.z) {
             const rheight = cheight * (this._corridor.size.z / this._corridor.size.x);
-            x = (this._corridor.entrypoint.x/ this._corridor.size.x) * cwidth;
-            y = (this._corridor.entrypoint.z / this._corridor.size.z) * rheight + (cheight-rheight)/2;
+            x = (this._corridor.entrypoint.x / this._corridor.size.x) * cwidth;
+            y = (this._corridor.entrypoint.z / this._corridor.size.z) * rheight + (cheight - rheight) / 2;
         } else {
             const rwidth = cwidth * (this._corridor.size.x / this._corridor.size.z);
-            x = (this._corridor.entrypoint.x / this._corridor.size.x) * rwidth + (cwidth-rwidth)/2;
+            x = (this._corridor.entrypoint.x / this._corridor.size.x) * rwidth + (cwidth - rwidth) / 2;
             y = (this._corridor.entrypoint.z / this._corridor.size.z) * cheight;
         }
 
         this._context.beginPath();
-            this._context.moveTo(x, y+10.0);
-            this._context.lineTo(x+10, y-10.0);
-            this._context.lineTo(x-10, y-10.0);
-            this._context.lineTo(x, y+10.0);
+            this._context.moveTo(x, y + 10.0);
+            this._context.lineTo(x + 10, y - 10.0);
+            this._context.lineTo(x - 10, y - 10.0);
+            this._context.lineTo(x, y + 10.0);
             this._context.fill();
-        this._context.closePath()
+        this._context.closePath();
     }
 
     /**
@@ -175,14 +180,14 @@ export class CorridorCanvasComponent implements AfterViewInit {
 
         /* Draw corridor bounds. */
         if (this._corridor.size.x > this._corridor.size.z) {
-            const rheight = cheight * (this._corridor.size.z/this._corridor.size.x);
-            corners.push(0.0, (cheight-rheight)/2, cwidth, cheight-(cheight-rheight));
+            const rheight = cheight * (this._corridor.size.z / this._corridor.size.x);
+            corners.push(0.0, (cheight - rheight) / 2, cwidth, cheight - (cheight - rheight));
         } else {
             const rwidth = cwidth * (this._corridor.size.x / this._corridor.size.z);
-            corners.push((cwidth-rwidth)/2, 0.0, cwidth-(cwidth-rwidth), cheight);
+            corners.push((cwidth - rwidth) / 2, 0.0, cwidth - (cwidth - rwidth), cheight);
         }
 
         /* Do the drawing. */
-        this._context.strokeRect(corners[0] + this._context.lineWidth/2, corners[1] + this._context.lineWidth/2, corners[2] - this._context.lineWidth, corners[3] - this._context.lineWidth);
+        this._context.strokeRect(corners[0] + this._context.lineWidth / 2, corners[1] + this._context.lineWidth / 2, corners[2] - this._context.lineWidth, corners[3] - this._context.lineWidth);
     }
 }

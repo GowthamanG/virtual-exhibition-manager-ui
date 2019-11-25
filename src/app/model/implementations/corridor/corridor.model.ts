@@ -1,7 +1,6 @@
 import {IRoom} from '../../interfaces/room/room.interface';
 import {Vector3f} from '../../interfaces/general/vector-3f.model';
-// TODO: own wall model for corridors
-import {Wall} from '../room/wall.model';
+import {Wall} from './wall.model';
 import {Room} from '../room/room.model';
 import {Exhibit} from '../exhibit.model';
 import {Exhibition} from '../exhibition.model';
@@ -20,26 +19,48 @@ export class Corridor implements ICorridor {
   /** Reference to the {Exhibition} this {Room} belongs to. */
   public _belongsTo: (Exhibition | null);
 
-  /**stores the rooms which are conected by this corridor*/
+  /**stores the rooms which are connected by this corridor*/
   public connects: Room[] = [];
 
   /**
-   * Default constructor for @type {Room}.
+   * Copies a @type {IRoom} to a new @type {Room} object.
+   *
+   * @param r IRoom object
+   * @param target The target for the Proxy object.
+   */
+  public static copyAsProxy(r: ICorridor, target: object = {}): Corridor {
+    const n = new Proxy(new Corridor(r.text, r.ambient, r.ceiling, r.floor, r.position, r.entrypoint, r.size), target);
+    n.walls = new Proxy([], target);
+    n.exhibits = new Proxy([], target);
+    n.connects = new Proxy([], target);
+    for (const e of r.exhibits) {
+      const ec = Exhibit.copyAsProxy(e, target);
+      ec._belongsTo = n;
+      n.exhibits.push(ec);
+    }
+    for (const w of r.walls) {
+      const wc = Wall.copyAsProxy(w, target);
+      wc._belongsTo = n;
+      n.walls.push(wc);
+    }
+    for (const c of r.connects) {
+      const cc = Room.copyAsProxy(c, target);
+      cc._belongsTo = n;
+      n.connects.push(cc);
+    }
+    return n;
+  }
+
+  /**
+   * Default constructor for @type {Corridor}.
    *
    * @param text
-   // tslint:disable-next-line:no-redundant-jsdoc
    * @param ambient
-   // tslint:disable-next-line:no-redundant-jsdoc
    * @param ceiling
-   // tslint:disable-next-line:no-redundant-jsdoc
    * @param floor
-   // tslint:disable-next-line:no-redundant-jsdoc
    * @param position
-   // tslint:disable-next-line:no-redundant-jsdoc
    * @param entrypoint
-   // tslint:disable-next-line:no-redundant-jsdoc
    * @param size
-   // tslint:disable-next-line:no-redundant-jsdoc
    */
   constructor(public text: string, public ambient: string, public ceiling: string, public floor: string,
               public position: Vector3f, public entrypoint: Vector3f, public size: Vector3f) {}
@@ -57,6 +78,12 @@ export class Corridor implements ICorridor {
       corridor.walls.push(w);
       w._belongsTo = corridor;
     }
+    /*
+    for (let i = 1; i <= 2; i++) {
+      const r = Room.empty();
+      corridor.connects.push(r);
+      r._belongsTo = corridor;
+    }*/
     return corridor;
   }
 

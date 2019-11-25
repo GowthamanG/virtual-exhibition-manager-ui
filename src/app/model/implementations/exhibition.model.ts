@@ -21,10 +21,17 @@ export class Exhibition implements IExhibition {
   public static copyAsProxy(e: IExhibition, target: object): Exhibition {
     const n = new Proxy(new Exhibition(e.id, e.key, e.name, e.description), target);
     n.rooms = new Proxy([], target);
+    n.corridors = new Proxy([], target);
     for (const r of e.rooms) {
       const rc = Room.copyAsProxy(r, target);
       rc._belongsTo = n;
       n.rooms.push(rc);
+    }
+
+    for (const c of e.corridors) {
+      const rc = Corridor.copyAsProxy(c, target);
+      rc._belongsTo = n;
+      n.corridors.push(rc);
     }
     return n;
   }
@@ -88,7 +95,7 @@ export class Exhibition implements IExhibition {
     if (c instanceof Corridor) {
       c = this.corridors.indexOf(c);
     }
-    if (c > -1 && c < this.rooms.length) {
+    if (c > -1 && c < this.corridors.length) {
       this.corridors.splice(c, 1);
       return true;
     } else {
