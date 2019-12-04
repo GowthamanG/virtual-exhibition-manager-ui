@@ -1,5 +1,5 @@
 import {IExhibition} from '../interfaces/exhibition/exhibition.interface';
-import {Room} from './room.model';
+import {Room} from './polygonalRoom/room.model';
 import {ObjectId} from '../interfaces/exhibition/objectid.interface';
 
 /**

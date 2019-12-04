@@ -1,4 +1,4 @@
-import {IRoom} from '../room/room.interface';
+import {IRoom} from '../polygonalRoom/room.interface';
 import {ObjectId} from './objectid.interface';
 
 export interface IExhibition {

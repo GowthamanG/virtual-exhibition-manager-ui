@@ -1,9 +1,9 @@
 import {IExhibit} from '../interfaces/objects/exhibit.interface';
 import {CHOType} from '../interfaces/objects/cho-type.interface';
 import {Vector3f} from '../interfaces/general/vector-3f.model';
-import {Room} from './room.model';
-import {Wall} from './wall.model';
-import {IRoom} from '../interfaces/room/room.interface';
+import {Room} from './polygonalRoom/room.model';
+import {Wall} from './polygonalRoom/wall.model';
+import {IRoom} from '../interfaces/cuboidRoom/room.interface';
 import {IExhibition} from '../interfaces/exhibition/exhibition.interface';
 
 export class Exhibit implements IExhibit {
@@ -47,7 +47,7 @@ export class Exhibit implements IExhibit {
      */
     get location() {
         if (this.isOnWall) {
-            return `Wall (${(<Room>(<Wall>this._belongsTo)._belongsTo).text}, ${ (<Wall>this._belongsTo).direction})`;
+            return `Wall (${(<Room>(<Wall>this._belongsTo)._belongsTo).text}, ${ (<Wall>this._belongsTo).wallNumber})`;
         } else if (this.isInRoom) {
             return `Room (${(<Room>this._belongsTo).text})`;
         } else {

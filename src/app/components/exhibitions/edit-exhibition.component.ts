@@ -1,12 +1,15 @@
 import {Component} from '@angular/core';
 import {EditorService} from '../../services/editor/editor.service';
 import {Exhibition} from '../../model/implementations/exhibition.model';
-import {Room} from '../../model/implementations/room.model';
-import {Wall} from '../../model/implementations/wall.model';
+import {Room} from '../../model/implementations/polygonalRoom/room.model';
+import {Wall} from '../../model/implementations/polygonalRoom/wall.model';
 import {Exhibit} from '../../model/implementations/exhibit.model';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
+import {MatDialog} from '@angular/material';
+import {RoomDialogueComponent} from './dialogues/room-dialogue/room-dialogue.component';
+import {RouterModule} from '@angular/router';
 
 @Component({
     selector: 'app-edit-exhibitions',
@@ -42,8 +45,9 @@ export class EditExhibitionComponent {
      * Default constructor.
      *
      * @param _editor Reference to the {EditorService}
+     * @param _dialog
      */
-    constructor(private _editor: EditorService) {
+    constructor(private _editor: EditorService, private _dialog: MatDialog) {
         this._roomDataSources = this._editor.currentObservable.pipe(map( e => e.rooms));
     }
 
@@ -72,7 +76,19 @@ export class EditExhibitionComponent {
      * Creates and adds a new {Room} to the current {Exhibition}.
      */
     public addNewRoom() {
-        this._editor.current.addRoom(Room.empty());
+        let newRoom: Room = Room.empty();
+
+        const dialogRef = this._dialog.open(RoomDialogueComponent, {
+          data: newRoom
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          console.log(result);
+          if (result !== null)  {
+            newRoom = result;
+            this._editor.current.addRoom(Room.empty());
+          }
+        });
     }
 
     /**

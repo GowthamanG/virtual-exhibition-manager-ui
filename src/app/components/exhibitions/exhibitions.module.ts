@@ -8,10 +8,15 @@ import { EditExhibitionVisualComponent } from './edit-exhibition-visual/edit-exh
 import { ChooseEditorComponent } from './choose-editor/choose-editor.component';
 import {RouterModule} from '@angular/router';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import { RoomDialogueComponent } from './dialogues/room-dialogue/room-dialogue.component';
+import {FormsModule} from '@angular/forms';
+import {SharedComponentsModule} from '../shared/shared-components.module';
+
 
 @NgModule({
-    declarations: [ EditExhibitionComponent, ListExhibitionComponent, EditExhibitionVisualComponent, ChooseEditorComponent ],
-  imports: [BrowserModule, MaterialModule, InspectorModule, RouterModule, DragDropModule],
-    exports: [ EditExhibitionComponent, ListExhibitionComponent ]
+  declarations: [ EditExhibitionComponent, ListExhibitionComponent, EditExhibitionVisualComponent, ChooseEditorComponent, RoomDialogueComponent ],
+  imports: [BrowserModule, MaterialModule, InspectorModule, RouterModule, DragDropModule, FormsModule, SharedComponentsModule],
+  entryComponents: [RoomDialogueComponent],
+  exports: [ EditExhibitionComponent, ListExhibitionComponent ]
 })
 export class ExhibitionsModule {}
