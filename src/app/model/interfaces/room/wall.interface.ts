@@ -5,6 +5,7 @@ import {IExhibit} from '../objects/exhibit.interface';
 export interface IWall {
     color: Vector3f;
     texture: string;
-    direction: Direction;
+    // direction: Direction;
+    wallnumber: number;
     exhibits: IExhibit[];
 }

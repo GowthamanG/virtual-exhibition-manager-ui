@@ -12,7 +12,6 @@ export class Exhibit implements IExhibit {
     public _belongsTo: (Room | Wall | null);
 
     /**
-     *
      * @param id
      * @param name
      * @param type
@@ -47,7 +46,7 @@ export class Exhibit implements IExhibit {
      */
     get location() {
         if (this.isOnWall) {
-            return `Wall (${(<Room>(<Wall>this._belongsTo)._belongsTo).text}, ${ (<Wall>this._belongsTo).direction})`;
+            return `Wall (${(<Room>(<Wall>this._belongsTo)._belongsTo).text}, ${ (<Wall>this._belongsTo).wallNumber})';  //direction})`;
         } else if (this.isInRoom) {
             return `Room (${(<Room>this._belongsTo).text})`;
         } else {

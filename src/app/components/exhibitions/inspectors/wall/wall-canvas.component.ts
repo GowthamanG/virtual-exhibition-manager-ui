@@ -67,7 +67,10 @@ export class WallCanvasComponent implements AfterViewInit {
      * Label for the left side of the canvas.
      */
     get leftLabel() {
-        switch (this._wall.direction) {
+
+        return this.wall.wallNumber;
+      /**
+       *   switch (this._wall.direction) {
             case 'NORTH':
                 return 'W';
             case 'EAST':
@@ -77,12 +80,17 @@ export class WallCanvasComponent implements AfterViewInit {
             case 'WEST':
                 return 'S';
         }
+       */
+
     }
 
     /**
      * Label for the right side of the canvas.
      */
     get rightLabel() {
+
+      return this._wall.wallNumber;
+      /**
         switch (this._wall.direction) {
             case 'NORTH':
                 return 'E';
@@ -93,6 +101,7 @@ export class WallCanvasComponent implements AfterViewInit {
             case 'WEST':
                 return 'N';
         }
+       **/
     }
 
     /**

@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {Room} from '../../../../model/implementations/room.model';
 import {Textures} from '../../../../model/interfaces/general/textures.model';
+import {Shapes} from '../../../../model/interfaces/general/shapes.model';
 
 @Component({
     selector: 'app-room-inspector',
@@ -14,6 +15,7 @@ export class RoomInspectorComponent {
     /** List of available textures. */
     private _textures: string[] = Textures.map(v => v.toString());
 
+  private _shapes: string[] = Shapes.map(value => value.toString());
     /**
      * Default constructor.
      */
@@ -24,6 +26,10 @@ export class RoomInspectorComponent {
      */
     get textures() {
         return this._textures;
+    }
+
+    get shapes() {
+      return this.shapes;
     }
 
 

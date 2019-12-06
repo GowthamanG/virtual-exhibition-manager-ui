@@ -17,6 +17,14 @@
 </mat-form-field>
 
 <mat-form-field class="full-width">
+  <mat-select placeholder="Room shape" [ngModel]="room.shape">
+    <mat-option *ngFor="let shape of shapes" [value]="shape">
+      {{shape}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field class="full-width">
     <mat-select placeholder="Floor (Texture)" [(ngModel)]="room.floor">
         <mat-option *ngFor="let texture of textures" [value]="texture">
             {{texture}}

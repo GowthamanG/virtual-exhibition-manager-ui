@@ -1,6 +1,6 @@
 import {IWall} from '../interfaces/room/wall.interface';
 import {Vector3f} from '../interfaces/general/vector-3f.model';
-import {Direction} from '../interfaces/room/direction.model';
+// import {Direction} from '../interfaces/room/direction.model';
 import {Exhibit} from './exhibit.model';
 import {Room} from './room.model';
 
@@ -11,13 +11,16 @@ export class Wall implements IWall {
     /** Reference to the {Room} this {Wall} belongs to. */
     public _belongsTo: (Room | null);
 
+    public wallnumber: number;
+
     /**
      * Default constructor for @type {Wall}.
-     * @param direction
+     * got replaced @param direction
+     * @param wallNumber
      * @param color
      * @param texture
      */
-    constructor(public direction: Direction, public color: Vector3f, public texture: string) {}
+    constructor(public wallNumber: number, public color: Vector3f, public texture: string) {}
 
     /**
      * Copies a @type {IWall} to a new @type {Wall} object.
@@ -26,7 +29,7 @@ export class Wall implements IWall {
      * @param target The target for the Proxy object.
      */
     public static copyAsProxy(w: IWall, target: object = {}): Wall {
-        const n = new Proxy(new Wall(w.direction, w.color, w.texture), target);
+        const n = new Proxy(new Wall(w.wallnumber, w.color, w.texture), target);
         n.exhibits = new Proxy([], target);
         for (const e of w.exhibits) {
             const ec = Exhibit.copyAsProxy(e, target);
@@ -85,6 +88,9 @@ export class Wall implements IWall {
      * The width of this {Wall}. Only defined, if it belongs to a {Room}.
      */
     get width() {
+
+        return this._belongsTo.size.x;
+        /**
         if (this._belongsTo) {
             switch (this.direction) {
                 case 'NORTH':
@@ -97,6 +103,8 @@ export class Wall implements IWall {
         } else {
             return Number.NaN;
         }
+
+         */
     }
 
     /**
@@ -115,9 +123,9 @@ export class Wall implements IWall {
      */
     get designation() {
         if (this._belongsTo) {
-            return `${this._belongsTo.text} (${this.direction})`;
+            return `${this._belongsTo.text} (${this.wallNumber})`;
         } else {
-           return  this.direction;
+           return  this.wallNumber;
         }
     }
 }

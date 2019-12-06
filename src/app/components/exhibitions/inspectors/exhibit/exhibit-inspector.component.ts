@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {Textures} from '../../../../model/interfaces/general/textures.model';
+import {Shapes} from '../../../../model/interfaces/general/shapes.model';
 import {Exhibit} from '../../../../model/implementations/exhibit.model';
 import {VremApiService} from '../../../../services/http/vrem-api.service';
 
@@ -14,6 +15,8 @@ export class ExhibitInspectorComponent {
 
     /** List of available textures. */
     private _textures: string[] = Textures.map(v => v.toString());
+
+    private _shapes: string[] = Shapes.map(value => value.toString());
 
     /**
      * Default constructor.
@@ -36,6 +39,10 @@ export class ExhibitInspectorComponent {
      */
     get textures() {
         return this._textures;
+    }
+
+    get shapes() {
+      return this._shapes;
     }
 
     /**

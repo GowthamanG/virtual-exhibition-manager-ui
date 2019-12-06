@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {Textures} from '../../../../model/interfaces/general/textures.model';
+import {Shapes} from '../../../../model/interfaces/general/shapes.model';
 import {Wall} from '../../../../model/implementations/wall.model';
 
 @Component({
@@ -14,11 +15,17 @@ export class WallInspectorComponent {
     /** List of available textures. */
     private _textures: string[] = Textures.map(v => v.toString());
 
+  private _shapes: string[] = Shapes.map(value => value.toString());
+
     /**
      * Getter for available textures.
      */
     get textures() {
         return this._textures;
+    }
+
+    get shappes() {
+      return this._shapes;
     }
 
     /**
