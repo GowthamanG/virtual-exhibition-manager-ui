@@ -40,6 +40,14 @@ export class Wall implements IWall {
   }
 
   /**
+   * Creates and returns an empty {Room}
+   */
+  public static empty(wallNumber: number): Wall {
+    const wall = new Wall(wallNumber.toString(), <Vector3f>{x: 0.0, y: 0.0, z: 0.0}, 'NBricks');
+    return wall;
+  }
+
+  /**
    * Adds an {Exhibit} to this {Wall}
    *
    * @param e The {Exhibit} to add.

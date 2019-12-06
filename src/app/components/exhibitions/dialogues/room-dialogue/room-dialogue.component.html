@@ -1,59 +1,72 @@
 <h2 mat-dialog-title>Create Room</h2>
 
-<mat-dialog-content id="drawing-content">
-  <mat-tab-group>
-    <mat-tab label="Floor">
-      <div>
-        <canvas #floorCanvas width="400px" height="200px" (click)="onClick()"></canvas>
-      </div>
-      <div>
-        <button>clear</button>
-      </div>
-    </mat-tab>
-    <mat-tab label="Ceiling">
-      <div>
-        <canvas #ceilingCanvas width="400px" height="200px" (click)="onClick()"></canvas>
-      </div>
-      <div>
-        <button>clear</button>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+<mat-dialog-content>
+
+  <mat-dialog-content id="drawing-content">
+    <mat-tab-group>
+
+      <mat-tab label="Floor">
+
+        <mat-dialog-content class="canvas-content" id="canvasDrawing">
+          <canvas (mousedown)="showCoordsStart($event)" (mousemove)="showCoordsOnMove($event)" id="floorCanvas" #floorCanvas></canvas>
+        </mat-dialog-content>
+
+        <mat-dialog-content class="canvas-content" id="canvasProperties">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Room name" [(ngModel)]="data.Room.text">
+          </mat-form-field>
+            <mat-list style="overflow: auto">
+              <mat-list-item *ngFor="let coordinate of data.Coordinates"> ({{coordinate.x}},{{coordinate.y}}) </mat-list-item>
+            </mat-list>
+        </mat-dialog-content>
+
+        <mat-dialog-content>
+          <p>Mouse position X: {{ this.mouse_pos_move_x}} Y: {{ this.mouse_pos_move_y}}</p>
+        </mat-dialog-content>
+
+        <mat-dialog-actions>
+          <button mat-raised-button>clear</button>
+        </mat-dialog-actions>
+      </mat-tab>
+    </mat-tab-group>
+
+  </mat-dialog-content>
+
+  <mat-dialog-content id="room-properties-content">
+    <mat-form-field class="full-width">
+      <input matInput placeholder="Room name" [(ngModel)]="data.Room.text">
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-select placeholder="Floor (Texture)" [(ngModel)]="data.Room.floor">
+        <mat-option *ngFor="let texture of _textures" [value]="texture">
+          {{texture}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-select placeholder="Ceiling (Texture)" [(ngModel)]="data.Room.ceiling">
+        <mat-option *ngFor="let texture of _textures" [value]="texture">
+          {{texture}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <h4 class="mat-h4">Room geometry</h4>
+
+    <app-vector3f-input [vector]="data.Room.position" [name]="'Position'"></app-vector3f-input>
+
+    <app-vector3f-input [vector]="data.Room.size" [name]="'Size'" [labels]="['Width', 'Height', 'Depth']"></app-vector3f-input>
+
+    <h4 class="mat-h4">Entrypoint</h4>
+    <app-vector3f-input [vector]="data.Room.entrypoint" [name]="'Entrypoint'" [show]="[true, false, true]" [labels]="['Entrypoint (x)', null, 'Entrypoint (y)']"></app-vector3f-input>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-raised-button (click)="save()">Save</button>
+    <button mat-raised-button (click)="cancel()">Cancel</button>
+  </mat-dialog-actions>
+
 </mat-dialog-content>
-
-<mat-dialog-content id="room-properties-content">
-  <mat-form-field class="full-width">
-    <input matInput placeholder="Room name" [(ngModel)]="data.text">
-  </mat-form-field>
-
-  <mat-form-field class="full-width">
-    <mat-select placeholder="Floor (Texture)" [(ngModel)]="data.floor">
-      <mat-option *ngFor="let texture of _textures" [value]="texture">
-        {{texture}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field class="full-width">
-    <mat-select placeholder="Ceiling (Texture)" [(ngModel)]="data.ceiling">
-      <mat-option *ngFor="let texture of _textures" [value]="texture">
-        {{texture}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <h4 class="mat-h4">Room geometry</h4>
-
-  <app-vector3f-input [vector]="data.position" [name]="'Position'"></app-vector3f-input>
-
-  <app-vector3f-input [vector]="data.size" [name]="'Size'" [labels]="['Width', 'Height', 'Depth']"></app-vector3f-input>
-
-  <h4 class="mat-h4">Entrypoint</h4>
-  <app-vector3f-input [vector]="data.entrypoint" [name]="'Entrypoint'" [show]="[true, false, true]" [labels]="['Entrypoint (x)', null, 'Entrypoint (y)']"></app-vector3f-input>
-
-</mat-dialog-content>
-
-<mat-dialog-actions>
-  <button mat-raised-button (click)="save()">Save</button>
-  <button mat-raised-button (click)="cancel()">Cancel</button>
-</mat-dialog-actions>

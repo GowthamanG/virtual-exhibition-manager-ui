@@ -14,7 +14,7 @@ import {SharedComponentsModule} from '../shared/shared-components.module';
 
 
 @NgModule({
-  declarations: [ EditExhibitionComponent, ListExhibitionComponent, EditExhibitionVisualComponent, ChooseEditorComponent, RoomDialogueComponent ],
+  declarations: [ EditExhibitionComponent, ListExhibitionComponent, EditExhibitionVisualComponent, ChooseEditorComponent, RoomDialogueComponent],
   imports: [BrowserModule, MaterialModule, InspectorModule, RouterModule, DragDropModule, FormsModule, SharedComponentsModule],
   entryComponents: [RoomDialogueComponent],
   exports: [ EditExhibitionComponent, ListExhibitionComponent ]

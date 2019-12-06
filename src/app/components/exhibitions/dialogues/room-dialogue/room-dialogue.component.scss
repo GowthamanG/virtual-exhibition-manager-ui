@@ -1,18 +1,24 @@
-.floorCanvas{
-  position: absolute;
+#floorCanvas{
+  position: relative;
   border:1px solid red;
-  width: 100%;
-  height: 100%
+  width: 400px;
+  height: 400px;
+  cursor: pointer;
 }
 
-.ceilingCanvas{
-  position: absolute;
-  border:1px solid blue;
-  width: 100%;
-  height: 100%
+
+#canvasDrawing {
+  float: left;
+  width: 50%;
+  height: 100%;
 }
 
-#drawing-content {
-  margin-bottom: 20px;
+.canvas-content {
+  margin: 10px 0 10px 0;
 }
+
+
+
+
+
 

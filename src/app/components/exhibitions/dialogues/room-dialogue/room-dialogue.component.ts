@@ -2,7 +2,7 @@ import {AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, In
 import {Room} from '../../../../model/implementations/polygonalRoom/room.model';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {Textures} from '../../../../model/interfaces/general/textures.model';
-import {Vector3f} from '../../../../model/interfaces/general/vector-3f.model';
+import {Vector2f} from '../../../../model/interfaces/general/vector-2f.model';
 
 
 @Component({
@@ -13,30 +13,199 @@ import {Vector3f} from '../../../../model/interfaces/general/vector-3f.model';
 export class RoomDialogueComponent implements OnInit, AfterViewInit {
   /** Template reference to the canvas element */
   @ViewChild('floorCanvas') floorCanvas: ElementRef;
-  @ViewChild('ceilingCanvas') ceilingCanvas: ElementRef;
+
+  private contextFloor: CanvasRenderingContext2D;
 
   /** Canvas 2d context https://stackblitz.com/edit/canvas-example, https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial*/
-  private contextFloor: CanvasRenderingContext2D;
-  private contextCeiling: CanvasRenderingContext2D;
-  private coordinates: Vector3f [] = [];
+
+  private grid_size = 19;
+  private x_axis_distance_grid_lines = 4;
+  private y_axis_distance_grid_lines = 8;
+  private x_axis_starting_point = {number: 1, suffix: ''};
+  private y_axis_starting_point = {number: 1, suffix: ''};
+  private canvas_floor_width: number;
+  private canvas_floor_height: number;
+
+
+  private num_lines_x: number;
+  private num_lines_y: number;
+  private mouse_pos_start_x: number;
+  private mouse_pos_start_y: number;
+  private mouse_pos_move_x: number;
+  private mouse_pos_move_y: number;
+  private origin_translate_x = this.y_axis_distance_grid_lines * this.grid_size;
+  private origin_translate_y = this.x_axis_distance_grid_lines * this.grid_size;
+
+  private temp_x: number;
+  private temp_y: number;
+
 
   private _textures: string[] = Textures.map(v => v.toString());
 
-  constructor(public dialogRef: MatDialogRef<RoomDialogueComponent>, @Inject(MAT_DIALOG_DATA) public data: Room) {}
+  constructor(public dialogRef: MatDialogRef<RoomDialogueComponent>, @Inject(MAT_DIALOG_DATA) public data: {Room: Room, Coordinates: Vector2f[]}) {
+    this.dialogRef.disableClose = true;
+  }
 
-  ngOnInit() {}
+
+  ngOnInit() {
+  }
 
   ngAfterViewInit(): void {
     this.contextFloor = (this.floorCanvas.nativeElement as HTMLCanvasElement).getContext('2d');
-    this.contextCeiling = (this.ceilingCanvas.nativeElement as HTMLCanvasElement).getContext('2d');
 
-    this.contextFloor.canvas.addEventListener('mousedown', this.onClick, false);
 
+    this.canvas_floor_width = this.contextFloor.canvas.width;
+    this.canvas_floor_height = this.contextFloor.canvas.height;
+    this.num_lines_x = Math.floor(this.canvas_floor_height / this.grid_size);
+    this.num_lines_y = Math.floor(this.canvas_floor_width / this.grid_size);
+
+    this.drawCoordinateSystem2(10);
+  }
+
+  drawCoordinateSytem(translate_x: number, translate_y: number): void {
+
+    for (let i = 0; i <= this.num_lines_x; i++) {
+      this.contextFloor.beginPath();
+      this.contextFloor.lineWidth = 1;
+
+      /** If line represents X-Axis draw in differnet color */
+      if (i === this.x_axis_distance_grid_lines) {
+        this.contextFloor.strokeStyle = '#000000';
+      } else {
+        this.contextFloor.strokeStyle = '#e9e9e9';
+      }
+
+      if (i === this.num_lines_x) {
+        this.contextFloor.moveTo(0, this.grid_size * i);
+        this.contextFloor.lineTo(this.canvas_floor_width, this.grid_size * i);
+      } else {
+        this.contextFloor.moveTo(0, this.grid_size * i + 0.5);
+        this.contextFloor.lineTo(this.canvas_floor_width, this.grid_size * i + 0.5);
+      }
+
+      this.contextFloor.stroke();
+    }
+
+    for (let i = 0; i <= this.num_lines_y; i++) {
+      this.contextFloor.beginPath();
+      this.contextFloor.lineWidth = 1;
+
+      /** If line represents Y-Axis draw in differnet color */
+      if (i === this.y_axis_distance_grid_lines) {
+        this.contextFloor.strokeStyle = '#000000';
+      } else {
+        this.contextFloor.strokeStyle = '#e9e9e9';
+      }
+
+      if (i === this.num_lines_y) {
+        this.contextFloor.moveTo(this.grid_size * i, 0);
+        this.contextFloor.lineTo(this.grid_size * i, this.canvas_floor_height);
+      } else {
+        this.contextFloor.moveTo(this.grid_size * i + 0.5, 0);
+        this.contextFloor.lineTo(this.grid_size * i + 0.5, this.canvas_floor_height);
+      }
+
+      this.contextFloor.stroke();
+    }
+
+    this.contextFloor.translate(translate_x, translate_y);
+
+    /** Ticks marks along the positive X-axis */
+    for (let i = 1; i < (this.num_lines_y - this.y_axis_distance_grid_lines); i++) {
+      this.contextFloor.beginPath();
+      this.contextFloor.lineWidth = 1;
+      this.contextFloor.strokeStyle = '#000000';
+
+      /** Draw a trick mark 6px long (- 3 to 3) */
+      this.contextFloor.moveTo(this.grid_size * i + 0.5, -3);
+      this.contextFloor.lineTo(this.grid_size * i + 0.5, 3);
+      this.contextFloor.stroke();
+
+      /** Text value at that point */
+      this.contextFloor.font = '9px Arial';
+      this.contextFloor.textAlign = 'start';
+      this.contextFloor.fillText(this.x_axis_starting_point.number * i + this.x_axis_starting_point.suffix, this.grid_size * i - 2, 15);
+    }
+
+    /** Ticks marks along the negative X-axis */
+    for (let i = 1; i < this.y_axis_distance_grid_lines; i++) {
+      this.contextFloor.beginPath();
+      this.contextFloor.lineWidth = 1;
+      this.contextFloor.strokeStyle = '#000000';
+
+      /** Draw a trick mark 6px long (- 3 to 3) */
+      this.contextFloor.moveTo(this.grid_size * i + 0.5, -3);
+      this.contextFloor.lineTo(this.grid_size * i + 0.5, 3);
+      this.contextFloor.stroke();
+
+      /** Text value at that point */
+      this.contextFloor.font = '9px Arial';
+      this.contextFloor.textAlign = 'end';
+      this.contextFloor.fillText(-this.x_axis_starting_point.number * i + this.x_axis_starting_point.suffix, -this.grid_size * i - 3, 15);
+    }
+
+    /** Ticks marks along the positive Y-axis
+     * Positive Y-Axis of graph is negative Y-axis of the canvas */
+    for (let i = 1; i < (this.num_lines_x - this.x_axis_distance_grid_lines); i++) {
+      this.contextFloor.beginPath();
+      this.contextFloor.lineWidth = 1;
+      this.contextFloor.strokeStyle = '#000000';
+
+      /** Draw a trick mark 6px long (- 3 to 3) */
+      this.contextFloor.moveTo(-3, this.grid_size * (i) + 0.5);
+      this.contextFloor.lineTo(3, this.grid_size * (i) + 0.5);
+      this.contextFloor.stroke();
+
+      /** Text value at that point */
+      this.contextFloor.font = '9px Arial';
+      this.contextFloor.textAlign = 'end';
+      this.contextFloor.fillText(-this.y_axis_starting_point.number * i + this.y_axis_starting_point.suffix, 8, this.grid_size * i + 3);
+    }
+
+    /** Ticks marks along the negative Y-axis */
+    for (let i = 1; i < this.x_axis_distance_grid_lines; i++) {
+      this.contextFloor.beginPath();
+      this.contextFloor.lineWidth = 1;
+      this.contextFloor.strokeStyle = '#000000';
+
+      /** Draw a trick mark 6px long (- 3 to 3) */
+      this.contextFloor.moveTo(-3, -this.grid_size * i + 0.5);
+      this.contextFloor.lineTo(3, -this.grid_size * i + 0.5);
+      this.contextFloor.stroke();
+
+      /** Text value at that point */
+      this.contextFloor.font = '9px Arial';
+      this.contextFloor.textAlign = 'start';
+      this.contextFloor.fillText(this.y_axis_starting_point.number * i + this.y_axis_starting_point.suffix, 8, -this.grid_size * i + 3);
+    }
+  }
+
+  drawCoordinateSystem2(grid_size: number): void {
+    const grid_size_x = this.canvas_floor_width / grid_size;
+    const grid_size_y = this.canvas_floor_height / grid_size;
+
+    for (let i = 1; i < 10; i++) {
+      if (i === (grid_size / 2)) {
+        this.contextFloor.strokeStyle = '#000000';
+      } else {
+        this.contextFloor.strokeStyle = '#e9e9e9';
+      }
+
+      this.contextFloor.beginPath();
+      this.contextFloor.moveTo(grid_size_x * i, 0);
+      this.contextFloor.lineTo(grid_size_x * i, this.canvas_floor_height);
+      this.contextFloor.stroke();
+
+      this.contextFloor.beginPath();
+      this.contextFloor.moveTo(0, grid_size_y * i);
+      this.contextFloor.lineTo(this.canvas_floor_width, grid_size_y * i);
+      this.contextFloor.stroke();
+    }
   }
 
 
   save(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(this.data);
   }
 
   cancel(): void {
@@ -47,14 +216,35 @@ export class RoomDialogueComponent implements OnInit, AfterViewInit {
     this.dialogRef.close(null);
   }
 
-  onClick(event: MouseEvent): void {
-    const x_layer = event.layerX;
-    const y_layer = event.layerY;
-    
-    console.log('X_layer: ' + x_layer + ' Y_layer: ' + y_layer);
+  showCoordsStart(e): void {
+    const rect = this.contextFloor.canvas.getBoundingClientRect();
+
+    this.mouse_pos_start_x = Math.floor((e.layerX - (this.canvas_floor_width / 2) - 50) / 40);
+    this.mouse_pos_start_y = -Math.floor((e.layerY - (this.canvas_floor_height / 2) - 125) / 40);
+
+    const mouse_x = e.layerX - rect.left;
+    const mouse_y = e.layerY - rect.top;
+
+    this.contextFloor.fillRect(e.layerX / 1.9, e.layerY / 1.9, 2, 2);
+
+    this.data.Coordinates.push({x: this.mouse_pos_start_x, y: this.mouse_pos_start_y});
+
+    if (this.temp_x !== null && this.temp_y !== null) {
+      this.contextFloor.beginPath();
+      this.contextFloor.moveTo(this.temp_x, this.temp_y);
+      this.contextFloor.lineTo(e.layerX / 1.9, e.layerY / 1.9);
+      this.contextFloor.strokeStyle = '#123DEA';
+      this.contextFloor.stroke();
+    }
+
+    this.temp_x = e.layerX / 1.9;
+    this.temp_y = e.layerY / 1.9;
   }
 
-
+  showCoordsOnMove(event): void {
+    this.mouse_pos_move_x = Math.floor((event.layerX - (this.canvas_floor_width / 2) - 50) / 40);
+    this.mouse_pos_move_y = -Math.floor((event.layerY - (this.canvas_floor_height / 2) - 125) / 40);
+  }
 }
 
 // https://usefulangle.com/post/19/html5-canvas-tutorial-how-to-draw-graphical-coordinate-system-with-grids-and-axis

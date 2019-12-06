@@ -9,6 +9,7 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {MatDialog} from '@angular/material';
 import {RoomDialogueComponent} from './dialogues/room-dialogue/room-dialogue.component';
+import {Vector2f} from '../../model/interfaces/general/vector-2f.model';
 import {RouterModule} from '@angular/router';
 
 @Component({
@@ -76,18 +77,33 @@ export class EditExhibitionComponent {
      * Creates and adds a new {Room} to the current {Exhibition}.
      */
     public addNewRoom() {
-        let newRoom: Room = Room.empty();
+        const coordinates: Vector2f[] = [];
+        const data = {
+          Room: Room.empty(),
+          Coordinates: coordinates
+        };
 
         const dialogRef = this._dialog.open(RoomDialogueComponent, {
-          data: newRoom
+          data: data
         });
 
         dialogRef.afterClosed().subscribe(result => {
           console.log(result);
           if (result !== null)  {
-            newRoom = result;
-            this._editor.current.addRoom(Room.empty());
+            data.Room = result.Room;
+
+            for (let i = 0; i < data.Coordinates.length - 1; i++) {
+              const w = Wall.empty(i);
+              w.wallCoordinates.push({x: data.Coordinates[i].x, y: 0, z: data.Coordinates[i].y});
+              w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: 0, z: data.Coordinates[i + 1].y});
+              w.wallCoordinates.push({x: data.Coordinates[i].x, y: data.Room.size.y, z: data.Coordinates[i].y});
+              console.log(data.Room.size.y);
+              w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: data.Room.size.y, z: data.Coordinates[i + 1].y});
+              data.Room.walls.push(w);
+            }
           }
+          this._editor.current.addRoom(data.Room);
+
         });
     }
 
