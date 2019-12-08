@@ -77,8 +77,8 @@ export class EditExhibitionComponent {
      * Creates and adds a new {Room} to the current {Exhibition}.
      */
     public addNewRoom() {
-        const coordinates: Vector2f[] = [];
-        const data = {
+        let coordinates: Vector2f[] = [];
+        let data = {
           Room: Room.empty(),
           Coordinates: coordinates
         };
@@ -89,8 +89,8 @@ export class EditExhibitionComponent {
 
         dialogRef.afterClosed().subscribe(result => {
           console.log(result);
+          console.log(data);
           if (result !== null)  {
-            data.Room = result.Room;
 
             for (let i = 0; i < data.Coordinates.length - 1; i++) {
               const w = Wall.empty(i);
@@ -100,6 +100,7 @@ export class EditExhibitionComponent {
               console.log(data.Room.size.y);
               w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: data.Room.size.y, z: data.Coordinates[i + 1].y});
               data.Room.walls.push(w);
+              w._belongsTo = data.Room;
             }
           }
           this._editor.current.addRoom(data.Room);

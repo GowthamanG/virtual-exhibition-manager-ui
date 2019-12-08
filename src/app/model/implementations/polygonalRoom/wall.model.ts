@@ -31,10 +31,16 @@ export class Wall implements IWall {
   public static copyAsProxy(w: IWall, target: object = {}): Wall {
     const n = new Proxy(new Wall(w.wallNumber, w.color, w.texture), target);
     n.exhibits = new Proxy([], target);
+    n.wallCoordinates = new Proxy([], target);
     for (const e of w.exhibits) {
       const ec = Exhibit.copyAsProxy(e, target);
       ec._belongsTo = n;
       n.exhibits.push(ec);
+    }
+    for (const c of w.wallCoordinates) {
+      let coordinate: Vector3f = {x: c.x, y: c.y, z: c.z};
+      const wc = new Proxy(coordinate, target);
+      n.wallCoordinates.push(wc);
     }
     return n;
   }
