@@ -11,6 +11,9 @@ import {Vector3f} from '../../../model/interfaces/general/vector-3f.model';
 import {VremApiService} from '../../../services/http/vrem-api.service';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {forEach} from '@angular/router/src/utils/collection';
+import {Vector2f} from '../../../model/interfaces/general/vector-2f.model';
+import {RoomDialogueComponent} from '../dialogues/room-dialogue/room-dialogue.component';
+import {MatDialog} from '@angular/material';
 // import * as Two from 'two.js';
 
 declare var Two: any;
@@ -117,7 +120,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
    *
    * @param _editor Reference to the {EditorService}
    */
-  constructor(private _editor: EditorService, private _vrem_service: VremApiService) {
+  constructor(private _editor: EditorService, private _vrem_service: VremApiService, private _dialog: MatDialog) {
     this._roomDataSources = this._editor.currentObservable.pipe(map( e => e.rooms));
     this._exhibits = this._vrem_service.listExhibits();
   }
@@ -147,7 +150,36 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
    * Creates and adds a new {Room} to the current {Exhibition}.
    */
   public addNewRoom() {
-    this._editor.current.addRoom(Room.empty());
+    let coordinates: Vector2f[] = [];
+    let data = {
+      Room: Room.empty(),
+      Coordinates: coordinates
+    };
+
+    const dialogRef = this._dialog.open(RoomDialogueComponent, {
+      data: data
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      console.log(data);
+      if (result !== 'cancelled') {
+
+        for (let i = 0; i < data.Coordinates.length - 1; i++) {
+          const w = Wall.empty(i);
+          w.wallCoordinates.push({x: data.Coordinates[i].x, y: 0, z: data.Coordinates[i].y});
+          w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: 0, z: data.Coordinates[i + 1].y});
+          w.wallCoordinates.push({x: data.Coordinates[i].x, y: data.Room.size.y, z: data.Coordinates[i].y});
+          console.log(data.Room.size.y);
+          w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: data.Room.size.y, z: data.Coordinates[i + 1].y});
+          data.Room.walls.push(w);
+          w._belongsTo = data.Room;
+        }
+
+        this._editor.current.addRoom(data.Room);
+      }
+
+    });
   }
 
   /**
