@@ -1,32 +1,36 @@
-<h2 mat-dialog-title>Create Room</h2>
+<h2 mat-dialog-title id="header">Create Room:
+  <mat-form-field class="full-width">
+    <input matInput [(ngModel)]="data.Room.text">
+  </mat-form-field>
+</h2>
 
 <mat-dialog-content>
 
   <mat-dialog-content id="drawing-content">
     <mat-tab-group>
-
-      <mat-tab label="Floor">
+      <mat-tab label="Surface">
 
         <mat-dialog-content class="canvas-content" id="canvasDrawing">
-          <canvas (mousedown)="showCoordsStart($event)" (mousemove)="showCoordsOnMove($event)" id="floorCanvas" #floorCanvas></canvas>
+          <canvas (mousedown)="showCoordsStart($event)" (mousemove)="showCoordsOnMove($event)" id="surfaceCanvas" #surfaceCanvas width="500" height="500"></canvas>
         </mat-dialog-content>
+
 
         <mat-dialog-content class="canvas-content" id="canvasProperties">
-          <mat-form-field class="full-width">
-            <input matInput placeholder="Room name" [(ngModel)]="data.Room.text">
-          </mat-form-field>
-            <mat-list style="overflow: auto">
-              <mat-list-item *ngFor="let coordinate of data.Coordinates"> ({{coordinate.x}},{{coordinate.y}}) </mat-list-item>
-            </mat-list>
+          <mat-dialog-content>
+            <mat-dialog-content id="mouse-position">
+              <p>Mouse position X: {{ this.mouse_pos_move_x}} Y: {{ this.mouse_pos_move_y}}</p>
+            </mat-dialog-content>
+
+            <mat-dialog-actions id="clear-button">
+              <button mat-raised-button (click)="clearCanvas()">clear</button>
+            </mat-dialog-actions>
+          </mat-dialog-content>
+
+          <mat-list style="overflow: auto">
+            <mat-list-item *ngFor="let coordinate of data.Coordinates"> ({{coordinate.x}},{{coordinate.y}}) </mat-list-item>
+          </mat-list>
         </mat-dialog-content>
 
-        <mat-dialog-content>
-          <p>Mouse position X: {{ this.mouse_pos_move_x}} Y: {{ this.mouse_pos_move_y}}</p>
-        </mat-dialog-content>
-
-        <mat-dialog-actions>
-          <button mat-raised-button>clear</button>
-        </mat-dialog-actions>
       </mat-tab>
     </mat-tab-group>
 

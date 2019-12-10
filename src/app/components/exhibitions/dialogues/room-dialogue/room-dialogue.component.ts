@@ -5,6 +5,7 @@ import {Textures} from '../../../../model/interfaces/general/textures.model';
 import {Vector2f} from '../../../../model/interfaces/general/vector-2f.model';
 
 
+
 @Component({
   selector: 'app-room-dialogue',
   templateUrl: './room-dialogue.component.html',
@@ -12,19 +13,19 @@ import {Vector2f} from '../../../../model/interfaces/general/vector-2f.model';
 })
 export class RoomDialogueComponent implements OnInit, AfterViewInit {
   /** Template reference to the canvas element */
-  @ViewChild('floorCanvas') floorCanvas: ElementRef;
+  @ViewChild('surfaceCanvas') surfaceCanvas: ElementRef;
 
-  private contextFloor: CanvasRenderingContext2D;
+  private contextSurface: CanvasRenderingContext2D;
 
   /** Canvas 2d context https://stackblitz.com/edit/canvas-example, https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial*/
 
-  private grid_size = 19;
+  private grid_size = 20;
   private x_axis_distance_grid_lines = 4;
   private y_axis_distance_grid_lines = 8;
   private x_axis_starting_point = {number: 1, suffix: ''};
   private y_axis_starting_point = {number: 1, suffix: ''};
-  private canvas_floor_width: number;
-  private canvas_floor_height: number;
+  private canvas_surface_width: number;
+  private canvas_surface_height: number;
 
 
   private num_lines_x: number;
@@ -39,6 +40,8 @@ export class RoomDialogueComponent implements OnInit, AfterViewInit {
   private temp_x: number;
   private temp_y: number;
 
+  private image_point: HTMLImageElement;
+
 
   private _textures: string[] = Textures.map(v => v.toString());
 
@@ -51,199 +54,221 @@ export class RoomDialogueComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.contextFloor = (this.floorCanvas.nativeElement as HTMLCanvasElement).getContext('2d');
+    this.contextSurface = (this.surfaceCanvas.nativeElement as HTMLCanvasElement).getContext('2d');
+    this.image_point = new Image(1, 1);
+    this.image_point.src = '../../../../../assets/black_point.png';
 
 
-    this.canvas_floor_width = this.contextFloor.canvas.width;
-    this.canvas_floor_height = this.contextFloor.canvas.height;
-    this.num_lines_x = Math.floor(this.canvas_floor_height / this.grid_size);
-    this.num_lines_y = Math.floor(this.canvas_floor_width / this.grid_size);
+    this.canvas_surface_width = this.contextSurface.canvas.width;
+    this.canvas_surface_height = this.contextSurface.canvas.height;
+    this.num_lines_x = Math.floor(this.canvas_surface_height / this.grid_size);
+    this.num_lines_y = Math.floor(this.canvas_surface_width / this.grid_size);
 
-    this.drawCoordinateSystem2(10);
+    this.drawCoordinateSystem2(20);
   }
 
   drawCoordinateSytem(translate_x: number, translate_y: number): void {
 
     for (let i = 0; i <= this.num_lines_x; i++) {
-      this.contextFloor.beginPath();
-      this.contextFloor.lineWidth = 1;
+      this.contextSurface.beginPath();
+      this.contextSurface.lineWidth = 1;
 
       /** If line represents X-Axis draw in differnet color */
       if (i === this.x_axis_distance_grid_lines) {
-        this.contextFloor.strokeStyle = '#000000';
+        this.contextSurface.strokeStyle = '#000000';
       } else {
-        this.contextFloor.strokeStyle = '#e9e9e9';
+        this.contextSurface.strokeStyle = '#e9e9e9';
       }
 
       if (i === this.num_lines_x) {
-        this.contextFloor.moveTo(0, this.grid_size * i);
-        this.contextFloor.lineTo(this.canvas_floor_width, this.grid_size * i);
+        this.contextSurface.moveTo(0, this.grid_size * i);
+        this.contextSurface.lineTo(this.canvas_surface_width, this.grid_size * i);
       } else {
-        this.contextFloor.moveTo(0, this.grid_size * i + 0.5);
-        this.contextFloor.lineTo(this.canvas_floor_width, this.grid_size * i + 0.5);
+        this.contextSurface.moveTo(0, this.grid_size * i + 0.5);
+        this.contextSurface.lineTo(this.canvas_surface_width, this.grid_size * i + 0.5);
       }
 
-      this.contextFloor.stroke();
+      this.contextSurface.stroke();
     }
 
     for (let i = 0; i <= this.num_lines_y; i++) {
-      this.contextFloor.beginPath();
-      this.contextFloor.lineWidth = 1;
+      this.contextSurface.beginPath();
+      this.contextSurface.lineWidth = 1;
 
       /** If line represents Y-Axis draw in differnet color */
       if (i === this.y_axis_distance_grid_lines) {
-        this.contextFloor.strokeStyle = '#000000';
+        this.contextSurface.strokeStyle = '#000000';
       } else {
-        this.contextFloor.strokeStyle = '#e9e9e9';
+        this.contextSurface.strokeStyle = '#e9e9e9';
       }
 
       if (i === this.num_lines_y) {
-        this.contextFloor.moveTo(this.grid_size * i, 0);
-        this.contextFloor.lineTo(this.grid_size * i, this.canvas_floor_height);
+        this.contextSurface.moveTo(this.grid_size * i, 0);
+        this.contextSurface.lineTo(this.grid_size * i, this.canvas_surface_height);
       } else {
-        this.contextFloor.moveTo(this.grid_size * i + 0.5, 0);
-        this.contextFloor.lineTo(this.grid_size * i + 0.5, this.canvas_floor_height);
+        this.contextSurface.moveTo(this.grid_size * i + 0.5, 0);
+        this.contextSurface.lineTo(this.grid_size * i + 0.5, this.canvas_surface_height);
       }
 
-      this.contextFloor.stroke();
+      this.contextSurface.stroke();
     }
 
-    this.contextFloor.translate(translate_x, translate_y);
+    this.contextSurface.translate(translate_x, translate_y);
 
     /** Ticks marks along the positive X-axis */
     for (let i = 1; i < (this.num_lines_y - this.y_axis_distance_grid_lines); i++) {
-      this.contextFloor.beginPath();
-      this.contextFloor.lineWidth = 1;
-      this.contextFloor.strokeStyle = '#000000';
+      this.contextSurface.beginPath();
+      this.contextSurface.lineWidth = 1;
+      this.contextSurface.strokeStyle = '#000000';
 
       /** Draw a trick mark 6px long (- 3 to 3) */
-      this.contextFloor.moveTo(this.grid_size * i + 0.5, -3);
-      this.contextFloor.lineTo(this.grid_size * i + 0.5, 3);
-      this.contextFloor.stroke();
+      this.contextSurface.moveTo(this.grid_size * i + 0.5, -3);
+      this.contextSurface.lineTo(this.grid_size * i + 0.5, 3);
+      this.contextSurface.stroke();
 
       /** Text value at that point */
-      this.contextFloor.font = '9px Arial';
-      this.contextFloor.textAlign = 'start';
-      this.contextFloor.fillText(this.x_axis_starting_point.number * i + this.x_axis_starting_point.suffix, this.grid_size * i - 2, 15);
+      this.contextSurface.font = '9px Arial';
+      this.contextSurface.textAlign = 'start';
+      this.contextSurface.fillText(this.x_axis_starting_point.number * i + this.x_axis_starting_point.suffix, this.grid_size * i - 2, 15);
     }
 
     /** Ticks marks along the negative X-axis */
     for (let i = 1; i < this.y_axis_distance_grid_lines; i++) {
-      this.contextFloor.beginPath();
-      this.contextFloor.lineWidth = 1;
-      this.contextFloor.strokeStyle = '#000000';
+      this.contextSurface.beginPath();
+      this.contextSurface.lineWidth = 1;
+      this.contextSurface.strokeStyle = '#000000';
 
       /** Draw a trick mark 6px long (- 3 to 3) */
-      this.contextFloor.moveTo(this.grid_size * i + 0.5, -3);
-      this.contextFloor.lineTo(this.grid_size * i + 0.5, 3);
-      this.contextFloor.stroke();
+      this.contextSurface.moveTo(this.grid_size * i + 0.5, -3);
+      this.contextSurface.lineTo(this.grid_size * i + 0.5, 3);
+      this.contextSurface.stroke();
 
       /** Text value at that point */
-      this.contextFloor.font = '9px Arial';
-      this.contextFloor.textAlign = 'end';
-      this.contextFloor.fillText(-this.x_axis_starting_point.number * i + this.x_axis_starting_point.suffix, -this.grid_size * i - 3, 15);
+      this.contextSurface.font = '9px Arial';
+      this.contextSurface.textAlign = 'end';
+      this.contextSurface.fillText(-this.x_axis_starting_point.number * i + this.x_axis_starting_point.suffix, -this.grid_size * i - 3, 15);
     }
 
     /** Ticks marks along the positive Y-axis
      * Positive Y-Axis of graph is negative Y-axis of the canvas */
     for (let i = 1; i < (this.num_lines_x - this.x_axis_distance_grid_lines); i++) {
-      this.contextFloor.beginPath();
-      this.contextFloor.lineWidth = 1;
-      this.contextFloor.strokeStyle = '#000000';
+      this.contextSurface.beginPath();
+      this.contextSurface.lineWidth = 1;
+      this.contextSurface.strokeStyle = '#000000';
 
       /** Draw a trick mark 6px long (- 3 to 3) */
-      this.contextFloor.moveTo(-3, this.grid_size * (i) + 0.5);
-      this.contextFloor.lineTo(3, this.grid_size * (i) + 0.5);
-      this.contextFloor.stroke();
+      this.contextSurface.moveTo(-3, this.grid_size * (i) + 0.5);
+      this.contextSurface.lineTo(3, this.grid_size * (i) + 0.5);
+      this.contextSurface.stroke();
 
       /** Text value at that point */
-      this.contextFloor.font = '9px Arial';
-      this.contextFloor.textAlign = 'end';
-      this.contextFloor.fillText(-this.y_axis_starting_point.number * i + this.y_axis_starting_point.suffix, 8, this.grid_size * i + 3);
+      this.contextSurface.font = '9px Arial';
+      this.contextSurface.textAlign = 'end';
+      this.contextSurface.fillText(-this.y_axis_starting_point.number * i + this.y_axis_starting_point.suffix, 8, this.grid_size * i + 3);
     }
 
     /** Ticks marks along the negative Y-axis */
     for (let i = 1; i < this.x_axis_distance_grid_lines; i++) {
-      this.contextFloor.beginPath();
-      this.contextFloor.lineWidth = 1;
-      this.contextFloor.strokeStyle = '#000000';
+      this.contextSurface.beginPath();
+      this.contextSurface.lineWidth = 1;
+      this.contextSurface.strokeStyle = '#000000';
 
       /** Draw a trick mark 6px long (- 3 to 3) */
-      this.contextFloor.moveTo(-3, -this.grid_size * i + 0.5);
-      this.contextFloor.lineTo(3, -this.grid_size * i + 0.5);
-      this.contextFloor.stroke();
+      this.contextSurface.moveTo(-3, -this.grid_size * i + 0.5);
+      this.contextSurface.lineTo(3, -this.grid_size * i + 0.5);
+      this.contextSurface.stroke();
 
       /** Text value at that point */
-      this.contextFloor.font = '9px Arial';
-      this.contextFloor.textAlign = 'start';
-      this.contextFloor.fillText(this.y_axis_starting_point.number * i + this.y_axis_starting_point.suffix, 8, -this.grid_size * i + 3);
+      this.contextSurface.font = '9px Arial';
+      this.contextSurface.textAlign = 'start';
+      this.contextSurface.fillText(this.y_axis_starting_point.number * i + this.y_axis_starting_point.suffix, 8, -this.grid_size * i + 3);
     }
   }
 
   drawCoordinateSystem2(grid_size: number): void {
-    const grid_size_x = this.canvas_floor_width / grid_size;
-    const grid_size_y = this.canvas_floor_height / grid_size;
+    const grid_size_x = this.contextSurface.canvas.width / grid_size;
+    const grid_size_y = this.contextSurface.canvas.height / grid_size;
 
-    for (let i = 1; i < 10; i++) {
+    for (let i = 1; i < grid_size; i++) {
       if (i === (grid_size / 2)) {
-        this.contextFloor.strokeStyle = '#000000';
+        this.contextSurface.strokeStyle = '#000000';
       } else {
-        this.contextFloor.strokeStyle = '#e9e9e9';
+        this.contextSurface.strokeStyle = '#e9e9e9';
       }
 
-      this.contextFloor.beginPath();
-      this.contextFloor.moveTo(grid_size_x * i, 0);
-      this.contextFloor.lineTo(grid_size_x * i, this.canvas_floor_height);
-      this.contextFloor.stroke();
+      this.contextSurface.beginPath();
+      this.contextSurface.moveTo(grid_size_x * i, 0);
+      this.contextSurface.lineTo(grid_size_x * i, this.canvas_surface_height);
+      this.contextSurface.stroke();
 
-      this.contextFloor.beginPath();
-      this.contextFloor.moveTo(0, grid_size_y * i);
-      this.contextFloor.lineTo(this.canvas_floor_width, grid_size_y * i);
-      this.contextFloor.stroke();
+      this.contextSurface.beginPath();
+      this.contextSurface.moveTo(0, grid_size_y * i);
+      this.contextSurface.lineTo(this.canvas_surface_width, grid_size_y * i);
+      this.contextSurface.stroke();
     }
   }
-
 
   save(): void {
     this.dialogRef.close(this.data);
   }
 
   cancel(): void {
-    this.dialogRef.close(null);
+    this.dialogRef.close('cancelled');
   }
 
   @HostListener('window:keyup.esc') onKeyUp() {
     this.dialogRef.close(null);
   }
 
-  showCoordsStart(e): void {
-    const rect = this.contextFloor.canvas.getBoundingClientRect();
+  clearCanvas(): void {
+    this.contextSurface.clearRect(0, 0, this.canvas_surface_width, this.canvas_surface_height);
+    this.data.Coordinates.length = 0;
+    this.temp_x = null;
+    this.temp_y = null;
+    this.drawCoordinateSystem2(20);
+  }
 
-    this.mouse_pos_start_x = Math.floor((e.layerX - (this.canvas_floor_width / 2) - 50) / 40);
-    this.mouse_pos_start_y = -Math.floor((e.layerY - (this.canvas_floor_height / 2) - 125) / 40);
+  showCoordsStart(event: MouseEvent): void {
 
-    const mouse_x = e.layerX - rect.left;
-    const mouse_y = e.layerY - rect.top;
+    let x = event.layerX;
+    let y = event.layerY;
 
-    this.contextFloor.fillRect(e.layerX / 1.9, e.layerY / 1.9, 2, 2);
+
+    this.mouse_pos_start_x = this.mouse_pos_move_x;
+    this.mouse_pos_start_y = this.mouse_pos_move_y;
+
+    //this.contextSurface.fillRect(x, y, 2, 1);
+    this.contextSurface.drawImage(this.image_point, x - 5, y - 5, 10, 10, );
+
 
     this.data.Coordinates.push({x: this.mouse_pos_start_x, y: this.mouse_pos_start_y});
 
     if (this.temp_x !== null && this.temp_y !== null) {
-      this.contextFloor.beginPath();
-      this.contextFloor.moveTo(this.temp_x, this.temp_y);
-      this.contextFloor.lineTo(e.layerX / 1.9, e.layerY / 1.9);
-      this.contextFloor.strokeStyle = '#123DEA';
-      this.contextFloor.stroke();
+      this.contextSurface.beginPath();
+      this.contextSurface.moveTo(this.temp_x, this.temp_y);
+      this.contextSurface.lineTo(x, y);
+      this.contextSurface.strokeStyle = '#123DEA';
+      this.contextSurface.lineWidth = 2.0;
+      this.contextSurface.stroke();
     }
 
-    this.temp_x = e.layerX / 1.9;
-    this.temp_y = e.layerY / 1.9;
+    this.temp_x = x;
+    this.temp_y = y;
   }
 
-  showCoordsOnMove(event): void {
-    this.mouse_pos_move_x = Math.floor((event.layerX - (this.canvas_floor_width / 2) - 50) / 40);
-    this.mouse_pos_move_y = -Math.floor((event.layerY - (this.canvas_floor_height / 2) - 125) / 40);
+  showCoordsOnMove(event: MouseEvent): void {
+    if (event.offsetX >= (this.canvas_surface_width / 2)) {
+      console.log(this.contextSurface.canvas.height, this.contextSurface.canvas.width);
+      this.mouse_pos_move_x = Math.floor((event.offsetX - this.canvas_surface_width / 2) / (this.grid_size + 5));
+    } else {
+      this.mouse_pos_move_x = Math.floor((event.offsetX - this.canvas_surface_width / 2) / (this.grid_size + 5));
+    }
+
+    if (event.offsetY >= (this.canvas_surface_height / 2)) {
+      this.mouse_pos_move_y = -Math.floor((event.offsetY - (this.canvas_surface_height /  2)) / (this.grid_size + 9));
+    } else {
+      this.mouse_pos_move_y = -Math.floor((event.offsetY - (this.canvas_surface_height /  2)) / (this.grid_size + 9));
+    }
   }
 }
 

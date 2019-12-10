@@ -90,7 +90,7 @@ export class EditExhibitionComponent {
         dialogRef.afterClosed().subscribe(result => {
           console.log(result);
           console.log(data);
-          if (result !== null)  {
+          if (result !== 'cancelled') {
 
             for (let i = 0; i < data.Coordinates.length - 1; i++) {
               const w = Wall.empty(i);
@@ -102,8 +102,9 @@ export class EditExhibitionComponent {
               data.Room.walls.push(w);
               w._belongsTo = data.Room;
             }
+
+            this._editor.current.addRoom(data.Room);
           }
-          this._editor.current.addRoom(data.Room);
 
         });
     }

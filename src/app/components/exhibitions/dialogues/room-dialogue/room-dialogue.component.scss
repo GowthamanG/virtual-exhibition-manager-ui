@@ -1,8 +1,6 @@
-#floorCanvas{
+#surfaceCanvas{
   position: relative;
-  border:1px solid red;
-  width: 400px;
-  height: 400px;
+  border: 1px solid red;
   cursor: pointer;
 }
 
@@ -16,6 +14,22 @@
 .canvas-content {
   margin: 10px 0 10px 0;
 }
+
+header {
+  margin-bottom: 0;
+}
+
+#mouse-position {
+  float: left;
+  position: center;
+  margin: 10px 1px 1px 1px;
+}
+
+#clear-button {
+  position: center;
+  margin: 1px 1px 1px 1px;
+}
+
 
 
 
