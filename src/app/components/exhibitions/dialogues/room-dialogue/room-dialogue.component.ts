@@ -30,10 +30,10 @@ export class RoomDialogueComponent implements OnInit, AfterViewInit {
 
   private num_lines_x: number;
   private num_lines_y: number;
-  private mouse_pos_start_x: number;
-  private mouse_pos_start_y: number;
-  private mouse_pos_move_x: number;
-  private mouse_pos_move_y: number;
+  private mouse_down_x: number;
+  private mouse_down_y: number;
+  private mouse_move_x: number;
+  private mouse_move_y: number;
   private origin_translate_x = this.y_axis_distance_grid_lines * this.grid_size;
   private origin_translate_y = this.x_axis_distance_grid_lines * this.grid_size;
 
@@ -228,20 +228,20 @@ export class RoomDialogueComponent implements OnInit, AfterViewInit {
     this.drawCoordinateSystem2(20);
   }
 
-  showCoordsStart(event: MouseEvent): void {
+  drawSurface(event: MouseEvent): void {
 
     let x = event.layerX;
     let y = event.layerY;
 
 
-    this.mouse_pos_start_x = this.mouse_pos_move_x;
-    this.mouse_pos_start_y = this.mouse_pos_move_y;
+    this.mouse_down_x = this.mouse_move_x;
+    this.mouse_down_y = this.mouse_move_y;
 
     //this.contextSurface.fillRect(x, y, 2, 1);
-    this.contextSurface.drawImage(this.image_point, x - 5, y - 5, 10, 10, );
 
+    this.contextSurface.drawImage(this.image_point, x - 5, y - 5, 10, 10);
 
-    this.data.Coordinates.push({x: this.mouse_pos_start_x, y: this.mouse_pos_start_y});
+    this.data.Coordinates.push({x: this.mouse_down_x, y: this.mouse_down_y});
 
     if (this.temp_x !== null && this.temp_y !== null) {
       this.contextSurface.beginPath();
@@ -256,18 +256,18 @@ export class RoomDialogueComponent implements OnInit, AfterViewInit {
     this.temp_y = y;
   }
 
-  showCoordsOnMove(event: MouseEvent): void {
+  coordsOnMove(event: MouseEvent): void {
     if (event.offsetX >= (this.canvas_surface_width / 2)) {
       console.log(this.contextSurface.canvas.height, this.contextSurface.canvas.width);
-      this.mouse_pos_move_x = Math.floor((event.offsetX - this.canvas_surface_width / 2) / (this.grid_size + 5));
+      this.mouse_move_x = Math.floor((event.offsetX - this.canvas_surface_width / 2) / (this.grid_size + 5));
     } else {
-      this.mouse_pos_move_x = Math.floor((event.offsetX - this.canvas_surface_width / 2) / (this.grid_size + 5));
+      this.mouse_move_x = Math.floor((event.offsetX - this.canvas_surface_width / 2) / (this.grid_size + 5));
     }
 
     if (event.offsetY >= (this.canvas_surface_height / 2)) {
-      this.mouse_pos_move_y = -Math.floor((event.offsetY - (this.canvas_surface_height /  2)) / (this.grid_size + 9));
+      this.mouse_move_y = -Math.floor((event.offsetY - (this.canvas_surface_height /  2)) / (this.grid_size + 9));
     } else {
-      this.mouse_pos_move_y = -Math.floor((event.offsetY - (this.canvas_surface_height /  2)) / (this.grid_size + 9));
+      this.mouse_move_y = -Math.floor((event.offsetY - (this.canvas_surface_height /  2)) / (this.grid_size + 9));
     }
   }
 }

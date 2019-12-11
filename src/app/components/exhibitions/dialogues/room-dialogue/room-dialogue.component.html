@@ -11,14 +11,14 @@
       <mat-tab label="Surface">
 
         <mat-dialog-content class="canvas-content" id="canvasDrawing">
-          <canvas (mousedown)="showCoordsStart($event)" (mousemove)="showCoordsOnMove($event)" id="surfaceCanvas" #surfaceCanvas width="500" height="500"></canvas>
+          <canvas (mousedown)="drawSurface($event)" (mousemove)="coordsOnMove($event)" id="surfaceCanvas" #surfaceCanvas width="500" height="500"></canvas>
         </mat-dialog-content>
 
 
         <mat-dialog-content class="canvas-content" id="canvasProperties">
           <mat-dialog-content>
             <mat-dialog-content id="mouse-position">
-              <p>Mouse position X: {{ this.mouse_pos_move_x}} Y: {{ this.mouse_pos_move_y}}</p>
+              <p>Mouse position X: {{ this.mouse_move_x}} Y: {{ this.mouse_move_y}}</p>
             </mat-dialog-content>
 
             <mat-dialog-actions id="clear-button">
