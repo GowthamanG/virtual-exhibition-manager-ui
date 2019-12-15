@@ -3,6 +3,8 @@ import {EditorService} from '../../../services/editor/editor.service';
 import {Exhibition} from '../../../model/implementations/exhibition.model';
 import {Room} from '../../../model/implementations/polygonalRoom/room.model';
 import {Wall} from '../../../model/implementations/polygonalRoom/wall.model';
+import {Wall as RoomWall} from '../../../model/implementations/polygonalRoom/wall.model';
+import {Wall as CorridorWall} from '../../../model/implementations/corridor/wall.model';
 import {Exhibit} from '../../../model/implementations/exhibit.model';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {Observable} from 'rxjs';
@@ -34,7 +36,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
   private pix_per_m: number;
 
   private lookup_table: any;
-  private current_wall: Wall;
+  private current_wall: RoomWall;
 
   ngAfterViewInit(): void {
     let size_room: Vector3f;
@@ -95,7 +97,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
   private _treeControl = new NestedTreeControl<any>(node => {
     if (node instanceof Room) {
       return [node.walls, node.exhibits];
-    } else if (node instanceof Wall) {
+    } else if (node instanceof RoomWall) {
       return node.exhibits;
     } else if (node instanceof Exhibit) {
       return [];
@@ -109,11 +111,11 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
   private _exhibits: Observable<Exhibit[]>;
 
   /** Helper functions to render the tree list. */
-  public readonly isWallFiller = (_: number, node: (Room | Wall | Exhibit)) => Array.isArray(node) && _ === 0;
-  public readonly isExhibitFiller = (_: number, node: (Room | Wall | Exhibit)) => Array.isArray(node)  && _ === 1;
-  public readonly isRoom = (_: number, node: (Room | Wall | Exhibit | FillerNode)) => node instanceof Room;
-  public readonly isWall = (_: number, node: (Room | Wall | Exhibit | FillerNode)) => node instanceof Wall;
-  public readonly isExhibit = (_: number, node: (Room | Wall | Exhibit | FillerNode)) => node instanceof Exhibit;
+  public readonly isWallFiller = (_: number, node: (Room | RoomWall | Exhibit)) => Array.isArray(node) && _ === 0;
+  public readonly isExhibitFiller = (_: number, node: (Room | RoomWall | Exhibit)) => Array.isArray(node)  && _ === 1;
+  public readonly isRoom = (_: number, node: (Room | RoomWall | Exhibit | FillerNode)) => node instanceof Room;
+  public readonly isWall = (_: number, node: (Room | RoomWall | Exhibit | FillerNode)) => node instanceof RoomWall;
+  public readonly isExhibit = (_: number, node: (Room | RoomWall | Exhibit | FillerNode)) => node instanceof Exhibit;
 
   /**
    * Default constructor.
@@ -135,14 +137,14 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
   /**
    * Getter for the inspected element.
    */
-  get inspected(): Observable<(Exhibition | Room | Wall | Exhibit)> {
+  get inspected(): Observable<(Exhibition | Room | RoomWall | Exhibit)> {
     return this._editor.inspectedObservable;
   }
 
   /**
    * Getter for the tree control.
    */
-  get treeControl(): NestedTreeControl<(Room | Wall | Exhibit)> {
+  get treeControl(): NestedTreeControl<(Room | RoomWall | Exhibit)> {
     return this._treeControl;
   }
 
@@ -182,6 +184,10 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
     });
   }
 
+  public addNewCorridor() {
+    this._editor.current.addRoom(Room.empty());
+  }
+
   /**
    * Deletes the provided {Room} from the current {Exhibition}
    *
@@ -205,7 +211,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
           return 'Exhibition';
         } else if (i instanceof Room) {
           return 'Room';
-        } else if (i instanceof Wall) {
+        } else if (i instanceof RoomWall) {
           return 'Wall';
         } else {
           return 'Nothing';
@@ -232,7 +238,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
    *
    */
   get isSelectedWall() {
-    return this.inspected.pipe(map(e => e  instanceof Wall));
+    return this.inspected.pipe(map(e => e  instanceof RoomWall));
   }
 
   /**
@@ -286,18 +292,29 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
   }
 
   /**
+   * Called whenever a user clicks a {Corridor}.
+   * @param event The mouse event.
+   * @param corridor The {Corridor} that has been clicked.
+   */
+  public corridorClicked(event: MouseEvent, corridor: Corridor) {
+    this._editor.inspected = corridor;
+    this.drawWall(corridor.size);
+    event.stopPropagation();
+  }
+
+  /**
    * Called whenever a user clicks a {Wall}.
    * @param event The mouse event.
    * @param wall The {Wall} that has been clicked.
    */
-  public wallClicked(event: MouseEvent, wall: Wall) {
+  public wallClicked(event: MouseEvent, wall: RoomWall) {
     this._editor.inspected = wall;
     this.current_wall = wall;
     event.stopPropagation();
     this.drawArt(wall);
   }
 
-  drawArt(wall: Wall): void {
+  drawArt(wall: RoomWall): void {
 
     this.two_global.remove(this.art_global);
     this.art_global = this.two_global.makeGroup();
@@ -371,6 +388,6 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
  * Each node has a name and an optiona list of children.
  */
 interface FillerNode {
-  walls: Wall[];
+  walls: RoomWall[];
   exhibits: Exhibit[];
 }

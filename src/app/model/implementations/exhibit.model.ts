@@ -3,7 +3,7 @@ import {CHOType} from '../interfaces/objects/cho-type.interface';
 import {Vector3f} from '../interfaces/general/vector-3f.model';
 import {Room} from './polygonalRoom/room.model';
 import {Wall} from './polygonalRoom/wall.model';
-import {IRoom} from '../interfaces/cuboidRoom/room.interface';
+import {IRoom} from '../interfaces/polygonalRoom/room.interface';
 import {IExhibition} from '../interfaces/exhibition/exhibition.interface';
 
 export class Exhibit implements IExhibit {

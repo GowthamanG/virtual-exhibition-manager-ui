@@ -18,9 +18,17 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-start;
+  clear: both;
 }
 
 .room-widget {
+  width: 500px;
+  margin: 10px;
+  padding: 15px;
+  border: darkgrey dotted 1px;
+}
+
+.corridor-widget {
   width: 500px;
   margin: 10px;
   padding: 15px;
@@ -47,3 +55,21 @@
   margin-bottom: 0;
   list-style-type: none;
 }
+
+.corridor-tree-invisible {
+  display: none;
+}
+
+.corridor-tree ul,
+.corridor-tree li {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+
+
+.btnWrapper div{
+  float:left;
+  margin: 1px;
+}
+

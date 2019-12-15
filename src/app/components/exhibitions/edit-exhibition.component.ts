@@ -12,6 +12,7 @@ import {RoomDialogueComponent} from './dialogues/room-dialogue/room-dialogue.com
 import {Vector2f} from '../../model/interfaces/general/vector-2f.model';
 import {RouterModule} from '@angular/router';
 
+
 @Component({
     selector: 'app-edit-exhibitions',
     templateUrl: 'edit-exhibition.component.html',
@@ -22,9 +23,13 @@ export class EditExhibitionComponent {
     /** The {NestedTreeControl} for the per-room tree list. */
     private _treeControl = new NestedTreeControl<any>(node => {
         if (node instanceof Room) {
-            return [node.walls, node.exhibits];
-        } else if (node instanceof Wall) {
+          return [node.walls, node.exhibits];
+        } else if (node instanceof Corridor) {
+          return [node.walls, node.exhibits];
+        } else if (node instanceof RoomWall) {
             return node.exhibits;
+        } else if (node instanceof CorridorWall) {
+          return node.exhibits;
         } else if (node instanceof Exhibit) {
             return [];
         } else {
@@ -34,13 +39,17 @@ export class EditExhibitionComponent {
 
     /** The data source for the per-room tree list. */
     private _roomDataSources: Observable<Room[]>;
+    /** The data source for the per-corridor tree list */
+    private _corridorDataSources: Observable<Corridor[]>;
 
     /** Helper functions to render the tree list. */
-    public readonly isWallFiller = (_: number, node: (Room | Wall | Exhibit)) => Array.isArray(node) && _ === 0;
-    public readonly isExhibitFiller = (_: number, node: (Room | Wall | Exhibit)) => Array.isArray(node)  && _ === 1;
-    public readonly isRoom = (_: number, node: (Room | Wall | Exhibit | FillerNode)) => node instanceof Room;
-    public readonly isWall = (_: number, node: (Room | Wall | Exhibit | FillerNode)) => node instanceof Wall;
-    public readonly isExhibit = (_: number, node: (Room | Wall | Exhibit | FillerNode)) => node instanceof Exhibit;
+    public readonly isWallFiller = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit)) => Array.isArray(node) && _ === 0;
+    public readonly isExhibitFiller = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit)) => Array.isArray(node)  && _ === 1;
+    public readonly isRoom = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit | FillerNode)) => node instanceof Room;
+    public readonly isCorridor = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit | FillerNode)) => node instanceof Corridor;
+    public readonly isRoomWall = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit | FillerNode)) => node instanceof RoomWall;
+    public readonly isCorridorWall = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit | FillerNode)) => node instanceof CorridorWall;
+    public readonly isExhibit = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit | FillerNode)) => node instanceof Exhibit;
 
     /**
      * Default constructor.
@@ -50,6 +59,7 @@ export class EditExhibitionComponent {
      */
     constructor(private _editor: EditorService, private _dialog: MatDialog) {
         this._roomDataSources = this._editor.currentObservable.pipe(map( e => e.rooms));
+        this._corridorDataSources = this._editor.currentObservable.pipe(map(e => e.corridors));
     }
 
     /**
@@ -62,14 +72,14 @@ export class EditExhibitionComponent {
     /**
      * Getter for the inspected element.
      */
-    get inspected(): Observable<(Exhibition | Room | Wall | Exhibit)> {
+    get inspected(): Observable<(Exhibition | Room | Corridor | RoomWall | CorridorWall | Exhibit)> {
         return this._editor.inspectedObservable;
     }
 
     /**
      * Getter for the tree control.
      */
-    get treeControl(): NestedTreeControl<(Room | Wall | Exhibit)> {
+    get treeControl(): NestedTreeControl<(Room | Corridor | RoomWall | CorridorWall | Exhibit)> {
         return this._treeControl;
     }
 
@@ -109,6 +119,14 @@ export class EditExhibitionComponent {
         });
     }
 
+  /**
+   * Creates and adds a new {Corridor} to the current {Exhibition}.
+   * TODO scale to other rooms
+   */
+  public addNewCorridor() {
+      this._editor.current.addCorridor(Corridor.empty());
+    }
+
     /**
      * Deletes the provided {Room} from the current {Exhibition}
      *
@@ -116,6 +134,15 @@ export class EditExhibitionComponent {
      */
     public removeRoom(r: Room): void {
         this._editor.current.deleteRoom(r);
+    }
+
+    /**
+    * Deletes the provided {Corridor} from the current {Exhibition}
+    *
+    * @param c The {Corridor} to delete.
+    */
+    public removeCorridor(c: Corridor): void {
+      this._editor.current.deleteCorridor(c);
     }
 
     /**
@@ -132,8 +159,12 @@ export class EditExhibitionComponent {
                     return 'Exhibition';
                 } else if (i instanceof Room) {
                     return 'Room';
-                } else if (i instanceof Wall) {
-                    return 'Wall';
+                } else if (i instanceof RoomWall) {
+                  return 'Wall';
+                } else if (i instanceof Corridor) {
+                    return 'Corridor';
+                } else if (i instanceof CorridorWall) {
+                  return 'Wall';
                 } else {
                     return 'Nothing';
                 }
@@ -158,8 +189,12 @@ export class EditExhibitionComponent {
     /**
      *
      */
-    get isSelectedWall() {
-        return this.inspected.pipe(map(e => e  instanceof Wall));
+    get isSelectedRoomWall() {
+        return this.inspected.pipe(map(e => e  instanceof RoomWall));
+    }
+
+    get isSelectedCorridorWall() {
+      return this.inspected.pipe(map(e => e  instanceof CorridorWall));
     }
 
     /**
@@ -170,6 +205,13 @@ export class EditExhibitionComponent {
     }
 
     /**
+    *
+    */
+    get isSelectedCorridor() {
+      return this.inspected.pipe(map(e => e instanceof Corridor));
+    }
+
+  /**
      *
      * @param event
      * @param rw
@@ -183,9 +225,8 @@ export class EditExhibitionComponent {
     /**
      * Called whenever a user clicks a {Exhibition}.
      * @param event The mouse event.
-     * @param exhibition The {Exhibition} that has been clicked.
      */
-    public exhibitionClicked(event: MouseEvent, exhibition: Exhibition) {
+    public exhibitionClicked(event: MouseEvent) {
         this._editor.inspected = this._editor.current;
         event.stopPropagation();
     }
@@ -212,13 +253,32 @@ export class EditExhibitionComponent {
     }
 
     /**
+    * Called whenever a user clicks a {Corridor}.
+    * @param event The mouse event.
+    * @param corridor The {Corridor} that has been clicked.
+    */
+    public corridorClicked(event: MouseEvent, corridor: Corridor) {
+      this._editor.inspected = corridor;
+      event.stopPropagation();
+    }
+
+    /**
      * Called whenever a user clicks a {Wall}.
      * @param event The mouse event.
      * @param wall The {Wall} that has been clicked.
      */
-    public wallClicked(event: MouseEvent, wall: Wall) {
+    public roomWallClicked(event: MouseEvent, wall: RoomWall) {
         this._editor.inspected = wall;
         event.stopPropagation();
+    }
+    /**
+    * Called whenever a user clicks a {Wall}.
+    * @param event The mouse event.
+    * @param wall The {Wall} that has been clicked.
+    */
+    public corridorWallClicked(event: MouseEvent, wall: CorridorWall) {
+      this._editor.inspected = wall;
+      event.stopPropagation();
     }
 }
 
@@ -228,6 +288,7 @@ export class EditExhibitionComponent {
  * Each node has a name and an optiona list of children.
  */
 interface FillerNode {
-    walls: Wall[];
+    roomWalls: RoomWall[];
+    corridorWalls: CorridorWall[];
     exhibits: Exhibit[];
 }
