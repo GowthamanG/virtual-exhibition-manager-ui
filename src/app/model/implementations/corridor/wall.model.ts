@@ -1,6 +1,5 @@
 import {IWall} from '../../interfaces/corridors/wall.interface';
 import {Vector3f} from '../../interfaces/general/vector-3f.model';
-import {Direction} from '../../interfaces/corridors/direction.model';
 import {Exhibit} from '../exhibit.model';
 import {Corridor} from './corridor.model';
 
@@ -11,13 +10,15 @@ export class Wall implements IWall {
   /** Reference to the {Corridor} this {Wall} belongs to. */
   public _belongsTo: (Corridor | null);
 
+  public wallCoordinates: Vector3f[] = [];
+
   /**
    * Default constructor for @type {Wall}.
-   * @param direction
+   * @param wallNumber
    * @param color
    * @param texture
    */
-  constructor(public direction: Direction, public color: Vector3f, public texture: string) {}
+  constructor(public wallNumber: string, public color: Vector3f, public texture: string) {}
 
   /**
    * Copies a @type {IWall} to a new @type {Wall} object.
@@ -25,15 +26,29 @@ export class Wall implements IWall {
    * @param w IWall object
    * @param target The target for the Proxy object.
    */
+
   public static copyAsProxy(w: IWall, target: object = {}): Wall {
-    const n = new Proxy(new Wall(w.direction, w.color, w.texture), target);
+    const n = new Proxy(new Wall(w.wallNumber, w.color, w.texture), target);
     n.exhibits = new Proxy([], target);
+    n.wallCoordinates = new Proxy([], target);
     for (const e of w.exhibits) {
       const ec = Exhibit.copyAsProxy(e, target);
       ec._belongsTo = n;
       n.exhibits.push(ec);
     }
+    for (const c of w.wallCoordinates) {
+      let coordinate: Vector3f = {x: c.x, y: c.y, z: c.z};
+      const wc = new Proxy(coordinate, target);
+      n.wallCoordinates.push(wc);
+    }
     return n;
+  }
+
+  /**
+   * Creates and returns an empty {Room}
+   */
+  public static empty(wallNumber: number): Wall {
+    return new Wall(wallNumber.toString(), <Vector3f>{x: 0.0, y: 0.0, z: 0.0}, 'NBricks');
   }
 
   /**
@@ -82,25 +97,25 @@ export class Wall implements IWall {
   }
 
   /**
-   * The width of this {Wall}. Only defined, if it belongs to a {Corridor}.
+   * The width of this {Wall}. Only defined, if it belongs to a {Room}.
    */
-  get width() {
+  /*get width() {
     if (this._belongsTo) {
       switch (this.direction) {
         case 'NORTH':
         case 'SOUTH':
           return this._belongsTo.size.x;
-        /*case 'WEST':
+        case 'WEST':
         case 'EAST':
-          return this._belongsTo.size.z;*/
+          return this._belongsTo.size.z;
       }
     } else {
       return Number.NaN;
     }
-  }
+  }*/
 
   /**
-   * The height of this {Wall}. Only defined, if it belongs to a {Corridor}.
+   * The height of this {Wall}. Only defined, if it belongs to a {Room}.
    */
   get height() {
     if (this._belongsTo) {
@@ -115,9 +130,9 @@ export class Wall implements IWall {
    */
   get designation() {
     if (this._belongsTo) {
-      return `${this._belongsTo.text} (${this.direction})`;
+      return `${this._belongsTo.text} (${this.wallNumber})`;
     } else {
-      return  this.direction;
+      return  this.wallNumber;
     }
   }
 }

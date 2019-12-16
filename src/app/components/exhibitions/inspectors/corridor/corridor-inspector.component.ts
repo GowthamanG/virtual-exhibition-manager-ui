@@ -2,7 +2,7 @@ import {Component, Input} from '@angular/core';
 import {Corridor} from '../../../../model/implementations/corridor/corridor.model';
 import {Textures} from '../../../../model/interfaces/general/textures.model';
 import {EditorService} from '../../../../services/editor/editor.service';
-import {Room} from '../../../../model/implementations/room/room.model';
+import {Room} from '../../../../model/implementations/polygonalRoom/room.model';
 
 @Component({
     selector: 'app-corridor-inspector',

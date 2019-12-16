@@ -1,3 +1,3 @@
-export interface ObjectId{
+export interface ObjectId {
   id: string;
 }

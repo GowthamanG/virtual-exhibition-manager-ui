@@ -9,7 +9,7 @@ import {IExhibition} from '../interfaces/exhibition/exhibition.interface';
 export class Exhibit implements IExhibit {
 
     /** Reference to the {Room} or {Wall} this {Exhibit} belongs to. */
-    public _belongsTo: (Room | Wall | null);
+    public _belongsTo: (Room | Wall|  null);
 
     /**
      *

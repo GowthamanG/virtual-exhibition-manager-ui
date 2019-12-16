@@ -2,7 +2,9 @@ import {Component} from '@angular/core';
 import {EditorService} from '../../services/editor/editor.service';
 import {Exhibition} from '../../model/implementations/exhibition.model';
 import {Room} from '../../model/implementations/polygonalRoom/room.model';
-import {Wall} from '../../model/implementations/polygonalRoom/wall.model';
+import {Wall as RoomWall} from '../../model/implementations/polygonalRoom/wall.model';
+import {Corridor} from '../../model/implementations/corridor/corridor.model';
+import {Wall as CorridorWall} from '../../model/implementations/corridor/wall.model';
 import {Exhibit} from '../../model/implementations/exhibit.model';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {Observable} from 'rxjs';
@@ -103,11 +105,10 @@ export class EditExhibitionComponent {
           if (result !== 'cancelled') {
 
             for (let i = 0; i < data.Coordinates.length - 1; i++) {
-              const w = Wall.empty(i);
+              const w = RoomWall.empty(i);
               w.wallCoordinates.push({x: data.Coordinates[i].x, y: 0, z: data.Coordinates[i].y});
               w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: 0, z: data.Coordinates[i + 1].y});
               w.wallCoordinates.push({x: data.Coordinates[i].x, y: data.Room.size.y, z: data.Coordinates[i].y});
-              console.log(data.Room.size.y);
               w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: data.Room.size.y, z: data.Coordinates[i + 1].y});
               data.Room.walls.push(w);
               w._belongsTo = data.Room;
@@ -124,8 +125,19 @@ export class EditExhibitionComponent {
    * TODO scale to other rooms
    */
   public addNewCorridor() {
-      this._editor.current.addCorridor(Corridor.empty());
+    const c: Corridor = Corridor.empty();
+
+    for (let i = 0; i < 2; i++) {
+      const w = CorridorWall.empty(i);
+      w.wallCoordinates.push({x: 0, y: 0, z: 0});
+      w.wallCoordinates.push({x: 0, y: 0, z: 0});
+      w.wallCoordinates.push({x: 0, y: 0, z: 0});
+      w.wallCoordinates.push({x: 0, y: 0, z: 0});
+      c.walls.push(w);
+      w._belongsTo = c;
     }
+    this._editor.current.addCorridor(c);
+  }
 
     /**
      * Deletes the provided {Room} from the current {Exhibition}

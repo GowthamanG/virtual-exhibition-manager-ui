@@ -4,6 +4,7 @@ import {Exhibition} from '../../../model/implementations/exhibition.model';
 import {Room} from '../../../model/implementations/polygonalRoom/room.model';
 import {Wall} from '../../../model/implementations/polygonalRoom/wall.model';
 import {Wall as RoomWall} from '../../../model/implementations/polygonalRoom/wall.model';
+import {Corridor} from '../../../model/implementations/corridor/corridor.model';
 import {Wall as CorridorWall} from '../../../model/implementations/corridor/wall.model';
 import {Exhibit} from '../../../model/implementations/exhibit.model';
 import {NestedTreeControl} from '@angular/cdk/tree';

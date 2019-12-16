@@ -4,8 +4,6 @@ import {Exhibit} from '../exhibit.model';
 import {Room} from './room.model';
 
 export class Wall implements IWall {
-    //wallNumber: number;
-    //wallCoordinates: Vector3f[];
   /** List of @type {Exhibit}s placed on this @type {Wall}. */
   public exhibits: Exhibit[] = [];
 
@@ -49,8 +47,7 @@ export class Wall implements IWall {
    * Creates and returns an empty {Room}
    */
   public static empty(wallNumber: number): Wall {
-    const wall = new Wall(wallNumber.toString(), <Vector3f>{x: 0.0, y: 0.0, z: 0.0}, 'NBricks');
-    return wall;
+    return new Wall(wallNumber.toString(), <Vector3f>{x: 0.0, y: 0.0, z: 0.0}, 'NBricks');
   }
 
   /**

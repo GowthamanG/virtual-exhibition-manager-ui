@@ -1,10 +1,9 @@
-import {IRoom} from '../../interfaces/room/room.interface';
+import {IRoom} from '../../interfaces/polygonalRoom/room.interface';
 import {Vector3f} from '../../interfaces/general/vector-3f.model';
 import {Wall} from './wall.model';
-import {Room} from '../room/room.model';
+import {Room} from '../polygonalRoom/room.model';
 import {Exhibit} from '../exhibit.model';
 import {Exhibition} from '../exhibition.model';
-import {Directions} from '../../interfaces/corridors/direction.model';
 import {ICorridor} from '../../interfaces/corridors/corridor.interface';
 
 
@@ -73,11 +72,12 @@ export class Corridor implements ICorridor {
       'Empty corridor', null, 'NWood', 'NWood',
       <Vector3f>{x: 0.0, y: 0.0, z: 0.0}, <Vector3f>{x: 1.0, y: 0.0, z: 1.0}, <Vector3f>{x: 5.0, y: 5.0, z: 5.0}
     );
-    for (const d of Directions) {
+    /*for (const d of Directions) {
       const w = new Wall(d, <Vector3f>{x: 0.0, y: 0.0, z: 0.0}, 'NBricks');
       corridor.walls.push(w);
       w._belongsTo = corridor;
-    }
+    }*/
+
     /*
     for (let i = 1; i <= 2; i++) {
       const r = Room.empty();

@@ -1,6 +1,7 @@
 import {IRoom} from '../../interfaces/polygonalRoom/room.interface';
 import {Vector3f} from '../../interfaces/general/vector-3f.model';
 import {Wall} from './wall.model';
+import {Corridor} from '../corridor/corridor.model';
 import {Exhibit} from '../exhibit.model';
 import {Exhibition} from '../exhibition.model';
 
@@ -13,7 +14,7 @@ export class Room implements IRoom {
   public walls: Wall[] = [];
 
   /** Reference to the {Exhibition} this {Room} belongs to. */
-  public _belongsTo: (Exhibition | null);
+  public _belongsTo: (Exhibition | Corridor | null);
 
   /**
    * Copies a @type {IRoom} to a new @type {Room} object.
