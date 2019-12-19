@@ -121,7 +121,7 @@ export class Wall implements IWall {
    */
   get height() {
     if (this._belongsTo) {
-      return this._belongsTo.size.y;
+      return this._belongsTo.height;
     } else {
       return Number.NaN;
     }

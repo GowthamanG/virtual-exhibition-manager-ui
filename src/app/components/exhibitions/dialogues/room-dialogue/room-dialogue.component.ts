@@ -213,7 +213,7 @@ export class RoomDialogueComponent implements OnInit, AfterViewInit {
   }
 
   cancel(): void {
-    this.dialogRef.close('cancelled');
+    this.dialogRef.close(null);
   }
 
   @HostListener('window:keyup.esc') onKeyUp() {

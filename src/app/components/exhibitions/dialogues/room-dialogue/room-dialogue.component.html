@@ -17,13 +17,15 @@
 
         <mat-dialog-content class="canvas-content" id="canvasProperties">
           <mat-dialog-content>
-            <mat-dialog-content id="mouse-position">
-              <p>Mouse position X: {{ this.mouse_move_x}} Y: {{ this.mouse_move_y}}</p>
-            </mat-dialog-content>
+            <p id="mouse-position">Mouse position X: {{ this.mouse_move_x}} Y: {{ this.mouse_move_y}}</p>
 
             <mat-dialog-actions id="clear-button">
               <button mat-raised-button (click)="clearCanvas()">clear</button>
             </mat-dialog-actions>
+
+            <p id="ceiling-scale">Ceiling scale: </p>
+            <mat-slider id="ceiling-scaling-slider" thumbLabel tickInterval="1" min="0" max="5" [(ngModel)]="data.Room.ceiling_scale"></mat-slider>
+
           </mat-dialog-content>
 
           <mat-list style="overflow: auto">
@@ -61,11 +63,9 @@
 
     <app-vector3f-input [vector]="data.Room.position" [name]="'Position'"></app-vector3f-input>
 
-    <app-vector3f-input [vector]="data.Room.size" [name]="'Size'" [labels]="['Width', 'Height', 'Depth']"></app-vector3f-input>
-
-    <h4 class="mat-h4">Entrypoint</h4>
-    <app-vector3f-input [vector]="data.Room.entrypoint" [name]="'Entrypoint'" [show]="[true, false, true]" [labels]="['Entrypoint (x)', null, 'Entrypoint (y)']"></app-vector3f-input>
-
+    <mat-form-field class="full-width">
+      <input matInput placeholder="Height" [(ngModel)]="data.Room.height">
+    </mat-form-field>
   </mat-dialog-content>
 
   <mat-dialog-actions>

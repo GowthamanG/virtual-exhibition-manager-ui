@@ -6,9 +6,11 @@ export interface IRoom {
   ambient: string;
   floor: string;
   ceiling: string;
+  height: number;
   position: Vector3f;
-  size: Vector3f;
-  entrypoint: Vector3f;
+  ceiling_scale: number;
+  //size: Vector3f;
+  //entrypoint: Vector3f;
   walls: IWall[];
   exhibits: IExhibit[];
 }
