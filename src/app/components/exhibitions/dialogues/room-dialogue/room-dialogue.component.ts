@@ -213,7 +213,8 @@ export class RoomDialogueComponent implements OnInit, AfterViewInit {
   save(): void {
     if (this.data.Coordinates.length < 4) {
       this.openAlertDialog('Not enough coordinates, select at least 4 coordinate!');
-    } else if (this.data.Coordinates[0] !== this.data.Coordinates[this.data.Coordinates.length - 1]) {
+    } else if (this.data.Coordinates[0].x !== this.data.Coordinates[this.data.Coordinates.length - 1].x || this.data.Coordinates[0].y !== this.data.Coordinates[this.data.Coordinates.length - 1].y) {
+      console.log(this.data.Coordinates[0].x);
       this.openAlertDialog('The first and the last coordinate must be the same!');
     } else {
       this.dialogRef.close(this.data);
