@@ -21,7 +21,7 @@
 
 <h4 class="mat-h4">Size & Position</h4>
 
-<mat-form-field class="full-width" *ngIf="exhibit.isOnWall">
+<mat-form-field class="full-width" *ngIf="exhibit.isOnRoomWall || exhibit.isOnCorridorWall">
     <input matInput placeholder="Location" [value]="exhibit.location" disabled/>
 </mat-form-field>
 

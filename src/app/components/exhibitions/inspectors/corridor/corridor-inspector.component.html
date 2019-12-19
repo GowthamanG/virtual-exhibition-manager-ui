@@ -46,7 +46,7 @@
 
 <mat-form-field class="full-width">
   <mat-select placeholder="Room 1" [(ngModel)]="corridor.connects[0]">
-    <mat-option *ngFor="let room of rooms" [value]="room">
+    <mat-option *ngFor="let room of _editor.current.rooms" [value]="room">
       {{room.text}}
     </mat-option>
   </mat-select>
@@ -55,7 +55,7 @@
 
 <mat-form-field class="full-width">
   <mat-select placeholder="Room 2" [(ngModel)]="corridor.connects[1]">
-    <mat-option *ngFor="let room of rooms" [value]="room">
+    <mat-option *ngFor="let room of _editor.current.rooms" [value]="room">
       {{room.text}}
     </mat-option>
   </mat-select>

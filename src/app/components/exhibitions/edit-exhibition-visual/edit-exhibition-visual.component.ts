@@ -115,16 +115,20 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   private _exhibits: Observable<Exhibit[]>;
 
   /** Helper functions to render the tree list. */
-  public readonly isWallFiller = (_: number, node: (Room | RoomWall | Exhibit)) => Array.isArray(node) && _ === 0;
-  public readonly isExhibitFiller = (_: number, node: (Room | RoomWall | Exhibit)) => Array.isArray(node)  && _ === 1;
-  public readonly isRoom = (_: number, node: (Room | RoomWall | Exhibit | FillerNode)) => node instanceof Room;
-  public readonly isWall = (_: number, node: (Room | RoomWall | Exhibit | FillerNode)) => node instanceof RoomWall;
-  public readonly isExhibit = (_: number, node: (Room | RoomWall | Exhibit | FillerNode)) => node instanceof Exhibit;
+  public readonly isWallFiller = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit)) => Array.isArray(node) && _ === 0;
+  public readonly isExhibitFiller = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit)) => Array.isArray(node)  && _ === 1;
+  public readonly isRoom = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit | FillerNode)) => node instanceof Room;
+  public readonly isCorridor = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit | FillerNode)) => node instanceof Corridor;
+  public readonly isRoomWall = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit | FillerNode)) => node instanceof RoomWall;
+  public readonly isCorridorWall = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit | FillerNode)) => node instanceof CorridorWall;
+  public readonly isExhibit = (_: number, node: (Room | Corridor | RoomWall | CorridorWall | Exhibit | FillerNode)) => node instanceof Exhibit;
 
   /**
    * Default constructor.
    *
    * @param _editor Reference to the {EditorService}
+   * @param _vrem_service
+   * @param _dialog
    */
   constructor(private _editor: EditorService, private _vrem_service: VremApiService, private _dialog: MatDialog) {
     this._roomDataSources = this._editor.currentObservable.pipe(map( e => e.rooms));
@@ -141,7 +145,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   /**
    * Getter for the inspected element.
    */
-  get inspected(): Observable<(Exhibition | Room | RoomWall | Exhibit)> {
+  get inspected(): Observable<(Exhibition | Room | Corridor | RoomWall | CorridorWall | Exhibit)> {
     return this._editor.inspectedObservable;
   }
 
@@ -201,6 +205,15 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   }
 
   /**
+   * Deletes the provided {Corridor} from the current {Exhibition}
+   *
+   * @param c The {Corridor} to delete.
+   */
+  public removeCorridor(c: Corridor): void {
+    this._editor.current.deleteCorridor(c);
+  }
+
+  /**
    * Returns the name of type of the currently inspected element.
    *
    * @return Type of the inspected element.
@@ -240,8 +253,12 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   /**
    *
    */
-  get isSelectedWall() {
+  get isSelectedRoomWall() {
     return this.inspected.pipe(map(e => e  instanceof RoomWall));
+  }
+
+  get isSelectedCorridorWall() {
+    return this.inspected.pipe(map(e => e  instanceof CorridorWall));
   }
 
   /**
@@ -249,6 +266,13 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
    */
   get isSelectedExhibit() {
     return this.inspected.pipe(map(e => e  instanceof Exhibit));
+  }
+
+  /**
+   *
+   */
+  get isSelectedCorridor() {
+    return this.inspected.pipe(map(e => e instanceof Corridor));
   }
 
   /**
@@ -297,12 +321,12 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   /**
    * Called whenever a user clicks a {Corridor}.
    * @param event The mouse event.
-   * @param corridor The {Corridor} that has been clicked.
+   * @param corridor
    */
   public corridorClicked(event: MouseEvent, corridor: Corridor) {
     this._editor.inspected = corridor;
-    this.drawWall(corridor.size);
     event.stopPropagation();
+    //this.drawWall(wall);
   }
 
   /**
@@ -310,24 +334,42 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
    * @param event The mouse event.
    * @param wall The {Wall} that has been clicked.
    */
-  public wallClicked(event: MouseEvent, wall: RoomWall) {
+  public roomWallClicked(event: MouseEvent, wall: RoomWall) {
     this._editor.inspected = wall;
     this.current_wall = wall;
     event.stopPropagation();
     this.drawArt(wall);
   }
+  /**
+   * Called whenever a user clicks a {Wall}.
+   * @param event The mouse event.
+   * @param wall The {Wall} that has been clicked.
+   */
+  public corridorWallClicked(event: MouseEvent, wall: CorridorWall) {
+    this._editor.inspected = wall;
+    event.stopPropagation();
+  }
 
-  drawArt(wall: RoomWall): void {
+  drawArt(roomWall: RoomWall = null, corridorWall: CorridorWall = null): void {
 
     this.two_global.remove(this.art_global);
     this.art_global = this.two_global.makeGroup();
     this.lookup_table = {};
 
-    let exhibit: any;
-    for (exhibit in wall.exhibits) {
-      const e = wall.exhibits[exhibit];
-      this.drawExhibit(e, this);
+    if (roomWall !== null) {
+      let exhibit: any;
+      for (exhibit in roomWall.exhibits) {
+        const e = roomWall.exhibits[exhibit];
+        this.drawExhibit(e, this);
+      }
+    } else if (corridorWall !== null) {
+      let exhibit: any;
+      for (exhibit in roomWall.exhibits) {
+        const e = roomWall.exhibits[exhibit];
+        this.drawExhibit(e, this);
+      }
     }
+
   }
 
   drawExhibit(e, that): void {
