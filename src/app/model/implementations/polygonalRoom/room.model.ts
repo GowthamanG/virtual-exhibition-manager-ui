@@ -23,7 +23,7 @@ export class Room implements IRoom {
    * @param target The target for the Proxy object.
    */
   public static copyAsProxy(r: IRoom, target: object = {}): Room {
-    const n = new Proxy(new Room(r.text, r.ambient, r.ceiling, r.floor, r.position, r.entrypoint, r.size), target);
+    const n = new Proxy(new Room(r.text, r.ambient, r.ceiling, r.floor, r.height, r.position, r.ceiling_scale), target);
     n.walls = new Proxy([], target);
     n.exhibits = new Proxy([], target);
     for (const e of r.exhibits) {
@@ -45,8 +45,7 @@ export class Room implements IRoom {
   public static empty(): Room {
     const room = new Room(
       'Empty room', null, 'NWood', 'NWood',
-      <Vector3f>{x: 0.0, y: 0.0, z: 0.0}, <Vector3f>{x: 1.0, y: 0.0, z: 1.0}, <Vector3f>{x: 5.0, y: 5.0, z: 5.0}
-    );
+      5.0, <Vector3f>{x: 1.0, y: 0.0, z: 1.0}, 1.0);
     /*for (const d of Directions) {
       const w = new Wall(d, <Vector3f>{x: 0.0, y: 0.0, z: 0.0}, 'NBricks');
       room.walls.push(w);
@@ -62,12 +61,12 @@ export class Room implements IRoom {
    * @param ambient
    * @param ceiling
    * @param floor
+   * @param height
    * @param position
-   * @param entrypoint
-   * @param size
+   * @param ceiling_scale
    */
-  constructor(public text: string, public ambient: string, public ceiling: string, public floor: string,
-              public position: Vector3f, public entrypoint: Vector3f, public size: Vector3f) {}
+  constructor(public text: string, public ambient: string, public ceiling: string, public floor: string, public height: number,
+              public position: Vector3f, public ceiling_scale: number) {}
 
 
   /**

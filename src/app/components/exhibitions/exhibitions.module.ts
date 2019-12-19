@@ -11,12 +11,13 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import { RoomDialogueComponent } from './dialogues/room-dialogue/room-dialogue.component';
 import {FormsModule} from '@angular/forms';
 import {SharedComponentsModule} from '../shared/shared-components.module';
+import { AlertMessageComponent } from '../alert-message/alert-message.component';
 
 
 @NgModule({
-  declarations: [ EditExhibitionComponent, ListExhibitionComponent, EditExhibitionVisualComponent, ChooseEditorComponent, RoomDialogueComponent],
+  declarations: [ EditExhibitionComponent, ListExhibitionComponent, EditExhibitionVisualComponent, ChooseEditorComponent, RoomDialogueComponent, AlertMessageComponent],
   imports: [BrowserModule, MaterialModule, InspectorModule, RouterModule, DragDropModule, FormsModule, SharedComponentsModule],
-  entryComponents: [RoomDialogueComponent],
+  entryComponents: [RoomDialogueComponent, AlertMessageComponent],
   exports: [ EditExhibitionComponent, ListExhibitionComponent ]
 })
 export class ExhibitionsModule {}

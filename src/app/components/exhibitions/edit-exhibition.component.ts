@@ -102,14 +102,14 @@ export class EditExhibitionComponent {
         dialogRef.afterClosed().subscribe(result => {
           console.log(result);
           console.log(data);
-          if (result !== 'cancelled') {
+          if (result !== null) {
 
             for (let i = 0; i < data.Coordinates.length - 1; i++) {
               const w = RoomWall.empty(i);
               w.wallCoordinates.push({x: data.Coordinates[i].x, y: 0, z: data.Coordinates[i].y});
               w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: 0, z: data.Coordinates[i + 1].y});
-              w.wallCoordinates.push({x: data.Coordinates[i].x, y: data.Room.size.y, z: data.Coordinates[i].y});
-              w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: data.Room.size.y, z: data.Coordinates[i + 1].y});
+              w.wallCoordinates.push({x: data.Coordinates[i].x, y: data.Room.height, z: data.Coordinates[i].y});
+              w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: data.Room.height, z: data.Coordinates[i + 1].y});
               data.Room.walls.push(w);
               w._belongsTo = data.Room;
             }

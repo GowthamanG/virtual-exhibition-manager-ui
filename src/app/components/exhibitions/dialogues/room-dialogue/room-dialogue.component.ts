@@ -1,8 +1,9 @@
 import {AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, Inject, OnInit, ViewChild} from '@angular/core';
 import {Room} from '../../../../model/implementations/polygonalRoom/room.model';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {Textures} from '../../../../model/interfaces/general/textures.model';
 import {Vector2f} from '../../../../model/interfaces/general/vector-2f.model';
+import {AlertMessageComponent} from '../../../alert-message/alert-message.component';
 
 
 
@@ -45,7 +46,8 @@ export class RoomDialogueComponent implements OnInit, AfterViewInit {
 
   private _textures: string[] = Textures.map(v => v.toString());
 
-  constructor(public dialogRef: MatDialogRef<RoomDialogueComponent>, @Inject(MAT_DIALOG_DATA) public data: {Room: Room, Coordinates: Vector2f[]}) {
+  constructor(public dialogRef: MatDialogRef<RoomDialogueComponent>, @Inject(MAT_DIALOG_DATA) public data: {Room: Room, Coordinates: Vector2f[]},
+              public _dialog: MatDialog) {
     this.dialogRef.disableClose = true;
   }
 
@@ -209,11 +211,29 @@ export class RoomDialogueComponent implements OnInit, AfterViewInit {
   }
 
   save(): void {
-    this.dialogRef.close(this.data);
+    if (this.data.Coordinates.length < 4) {
+      this.openAlertDialog('Not enough coordinates, select at least 4 coordinate!');
+    } else if (this.data.Coordinates[0].x !== this.data.Coordinates[this.data.Coordinates.length - 1].x || this.data.Coordinates[0].y !== this.data.Coordinates[this.data.Coordinates.length - 1].y) {
+      console.log(this.data.Coordinates[0].x);
+      this.openAlertDialog('The first and the last coordinate must be the same!');
+    } else {
+      this.dialogRef.close(this.data);
+    }
+  }
+
+  openAlertDialog(message: string): void {
+    const dialogRef = this._dialog.open(AlertMessageComponent, {
+      width: '350px',
+      data: message
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Warning closed');
+    });
   }
 
   cancel(): void {
-    this.dialogRef.close('cancelled');
+    this.dialogRef.close(null);
   }
 
   @HostListener('window:keyup.esc') onKeyUp() {

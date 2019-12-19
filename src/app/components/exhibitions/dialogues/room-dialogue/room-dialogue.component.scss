@@ -21,13 +21,25 @@ header {
 
 #mouse-position {
   float: left;
-  position: center;
-  margin: 10px 1px 1px 1px;
+  position: relative;
+  margin: 25px 10px 10px 0px;
 }
 
 #clear-button {
-  position: center;
-  margin: 1px 1px 1px 1px;
+  position: relative;
+  margin: auto;
+}
+
+#ceiling-scale {
+  float: left;
+  position: relative;
+  margin: 12px 10px 10px 0px;
+}
+
+#ceiling-scaling-slider {
+  position: relative;
+  width: 250px;
+  margin: auto;
 }
 
 

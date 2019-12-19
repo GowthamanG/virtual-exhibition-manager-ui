@@ -27,7 +27,7 @@ declare var $: any;
   templateUrl: './edit-exhibition-visual.component.html',
   styleUrls: ['./edit-exhibition-visual.component.scss']
 })
-export class EditExhibitionVisualComponent implements AfterViewInit{
+export class EditExhibitionVisualComponent implements AfterViewInit {
 
   @ViewChild('vis', {read: ElementRef}) vis_elem: ElementRef;
   private two_global: any;
@@ -40,17 +40,18 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
   private current_wall: RoomWall;
 
   ngAfterViewInit(): void {
-    let size_room: Vector3f;
-    this._roomDataSources.subscribe(x => size_room = x[0].size);
-    this.drawWall(size_room);
+    let wall: Wall;
+    this._roomDataSources.subscribe(x => wall = x[0].walls[0]);
+    this.drawWall(wall);
   }
 
-  drawWall(size_room: Vector3f): void {
+  drawWall(_wall: Wall): void {
     while (this.vis_elem.nativeElement.firstChild) {
       this.vis_elem.nativeElement.removeChild(this.vis_elem.nativeElement.firstChild);
     }
     // Get room size and calculate width to height ratio.
-    const ratio_wall = size_room.x / size_room.y;
+    //const ratio_wall = size_room.x / size_room.y;
+    const ratio_wall = (_wall.wallCoordinates[0].x - _wall.wallCoordinates[3].x) / (_wall.wallCoordinates[0].y - _wall.wallCoordinates[3].y);
 
     const elem = this.vis_elem.nativeElement;
     const ratio_elem = elem.clientWidth / elem.clientHeight;
@@ -58,11 +59,13 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
     if (ratio_wall > ratio_elem) {
       this.two_width = elem.clientWidth;
       this.two_height = this.two_width / ratio_wall;
-      this.pix_per_m = this.two_width / size_room.x;
+      //this.pix_per_m = this.two_width / size_room.x;
+      this.pix_per_m = this.two_width / (_wall.wallCoordinates[0].x - _wall.wallCoordinates[3].x);
     } else {
       this.two_height = elem.clientHeight;
       this.two_width = this.two_height * ratio_wall;
-      this.pix_per_m = elem.clientHeight / size_room.y;
+      //this.pix_per_m = elem.clientHeight / size_room.y;
+      this.pix_per_m = elem.clientHeight / (_wall.wallCoordinates[0].y - _wall.wallCoordinates[3].y);
       elem.style.width = this.two_width;
     }
 
@@ -172,9 +175,8 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
           const w = Wall.empty(i);
           w.wallCoordinates.push({x: data.Coordinates[i].x, y: 0, z: data.Coordinates[i].y});
           w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: 0, z: data.Coordinates[i + 1].y});
-          w.wallCoordinates.push({x: data.Coordinates[i].x, y: data.Room.size.y, z: data.Coordinates[i].y});
-          console.log(data.Room.size.y);
-          w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: data.Room.size.y, z: data.Coordinates[i + 1].y});
+          w.wallCoordinates.push({x: data.Coordinates[i].x, y: data.Room.height, z: data.Coordinates[i].y});
+          w.wallCoordinates.push({x: data.Coordinates[i + 1].x, y: data.Room.height, z: data.Coordinates[i + 1].y});
           data.Room.walls.push(w);
           w._belongsTo = data.Room;
         }
@@ -288,7 +290,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit{
    */
   public roomClicked(event: MouseEvent, room: Room) {
     this._editor.inspected = room;
-    this.drawWall(room.size);
+    //this.drawWall(room.size);
     event.stopPropagation();
   }
 

@@ -112,4 +112,8 @@ export class AppComponent {
         }
     });
   }
+
+  public handleHelpClick() {
+    window.open('https://github.com/VIRTUE-DBIS/virtual-exhibition-presenter/wiki');
+  }
 }
