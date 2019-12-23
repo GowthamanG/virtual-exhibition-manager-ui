@@ -11,14 +11,13 @@ import {Room} from '../../../../model/implementations/polygonalRoom/room.model';
 })
 
 export class CorridorInspectorComponent {
-    @Input('corridor')
-    private _corridor: Corridor = null;
+    @Input('corridor') public corridorInspected;
 
     /** List of available textures. */
     private _textures: string[] = Textures.map(v => v.toString());
     /** List of available rooms. */
     private _rooms: Room[] = this._editor.current.rooms.map(v => v);
-    private _neighbourCorridors: Corridor[] = this._editor.current.corridors.map(v => v);
+    private _corridors: Corridor[] = this._editor.current.corridors.map(v => v);
 
     /**
      * Default constructor.
@@ -36,10 +35,11 @@ export class CorridorInspectorComponent {
     * only show those rooms, which are still not selected by any corridors
     */
     get rooms() {
-      const availableRooms: Array<Room> = new Array<Room>().concat(this._rooms);
+      //const availableRooms: Array<Room> = new Array<Room>().concat(this._rooms);
+      const availableRooms = this._rooms;
 
       for (const r of availableRooms) {
-        for (const c of this._neighbourCorridors) {
+        for (const c of this._corridors) {
           if (c.connects.includes(r)) {
             const i = availableRooms.indexOf(r);
             availableRooms.splice(i, 1);
@@ -54,6 +54,6 @@ export class CorridorInspectorComponent {
      * Getter for the
      */
     get corridor(): Corridor {
-        return this._corridor;
+        return this.corridorInspected;
     }
 }
