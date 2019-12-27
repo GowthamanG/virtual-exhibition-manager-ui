@@ -64,7 +64,7 @@
     <app-vector3f-input [vector]="data.Room.position" [name]="'Position'"></app-vector3f-input>
 
     <mat-form-field class="full-width">
-      <input matInput placeholder="Height" [(ngModel)]="data.Room.height">
+      <input matInput placeholder="Height" type="number" [(ngModel)]="data.Room.height">
     </mat-form-field>
   </mat-dialog-content>
 
