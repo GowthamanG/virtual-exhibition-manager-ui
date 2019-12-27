@@ -37,9 +37,8 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   private current_wall: Wall;
 
   ngAfterViewInit(): void {
-    let wall: Wall;
-    this._roomDataSources.subscribe(x => wall = x[0].walls[0]);
-    this.drawWall(wall);
+    this._roomDataSources.subscribe(x => this.current_wall = x[0].walls[0]);
+    this.drawWall(this.current_wall);
   }
 
   drawWall(_wall: Wall): void {
@@ -48,7 +47,11 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
     }
     // Get room size and calculate width to height ratio.
     //const ratio_wall = size_room.x / size_room.y;
-    const ratio_wall = (_wall.wallCoordinates[0].x - _wall.wallCoordinates[3].x) / (_wall.wallCoordinates[0].y - _wall.wallCoordinates[3].y);
+
+    // Use pythagoras to calculate the width, value y does not have to be considered, because it will be 0
+    const wall_width = Math.sqrt(Math.pow(_wall.wallCoordinates[0].x - _wall.wallCoordinates[1].x, 2) + Math.pow(_wall.wallCoordinates[0].z - _wall.wallCoordinates[1].z, 2));
+    const wall_height = _wall.wallCoordinates[3].y;
+    const ratio_wall = wall_width / wall_height;
 
     const elem = this.vis_elem.nativeElement;
     const ratio_elem = elem.clientWidth / elem.clientHeight;
@@ -57,12 +60,12 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
       this.two_width = elem.clientWidth;
       this.two_height = this.two_width / ratio_wall;
       //this.pix_per_m = this.two_width / size_room.x;
-      this.pix_per_m = this.two_width / (_wall.wallCoordinates[0].x - _wall.wallCoordinates[3].x);
+      this.pix_per_m = this.two_width / wall_width;
     } else {
       this.two_height = elem.clientHeight;
       this.two_width = this.two_height * ratio_wall;
       //this.pix_per_m = elem.clientHeight / size_room.y;
-      this.pix_per_m = elem.clientHeight / (_wall.wallCoordinates[0].y - _wall.wallCoordinates[3].y);
+      this.pix_per_m = elem.clientHeight / wall_height;
       elem.style.width = this.two_width;
     }
 
@@ -122,6 +125,8 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
    * Default constructor.
    *
    * @param _editor Reference to the {EditorService}
+   * @param _vrem_service
+   * @param _dialog
    */
   constructor(private _editor: EditorService, private _vrem_service: VremApiService, private _dialog: MatDialog) {
     this._roomDataSources = this._editor.currentObservable.pipe(map( e => e.rooms));
@@ -166,7 +171,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log(result);
       console.log(data);
-      if (result !== 'cancelled') {
+      if (result !== null) {
 
         for (let i = 0; i < data.Coordinates.length - 1; i++) {
           const w = Wall.empty(i);
@@ -283,7 +288,6 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
    */
   public roomClicked(event: MouseEvent, room: Room) {
     this._editor.inspected = room;
-    //this.drawWall(room.size);
     event.stopPropagation();
   }
 
@@ -295,6 +299,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   public wallClicked(event: MouseEvent, wall: Wall) {
     this._editor.inspected = wall;
     this.current_wall = wall;
+    this.drawWall(this.current_wall);
     event.stopPropagation();
     this.drawArt(wall);
   }
