@@ -8,6 +8,7 @@ import {ExhibitUpload} from '../../../model/implementations/exhibit-upload.model
 import {Observable, of} from 'rxjs';
 import {catchError, first, map, tap} from 'rxjs/operators';
 import {Exhibition} from '../../../model/implementations/exhibition.model';
+import {MatSnackBar, MatSnackBarConfig} from '@angular/material';
 
 @Component({
   selector: 'app-exhibit-form',
@@ -17,9 +18,13 @@ import {Exhibition} from '../../../model/implementations/exhibition.model';
 export class ExhibitFormComponent implements OnInit {
 
   exhibitForm: FormGroup;
+  filename: string;
+  type_image = false;
+  type_model = false;
   ratio: number;
 
-  constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private _vrem_service: VremApiService ) { }
+  constructor(private fb: FormBuilder, private cd: ChangeDetectorRef,
+              private _vrem_service: VremApiService, private _snackbar: MatSnackBar ) { }
 
   ngOnInit() {
     this.exhibitForm = this.fb.group({
@@ -41,6 +46,14 @@ export class ExhibitFormComponent implements OnInit {
 
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
+      console.log(event.target.files);
+      this.filename = event.target.files[0].name.substring(0, event.target.files[0].name.length - 4);
+
+      if (event.target.files[0].type.startWith('image/')) {
+        this.type_image = true;
+      } //TODO check type for model
+
+
       reader.readAsDataURL(file);
 
       reader.onload = () => {
@@ -83,7 +96,7 @@ export class ExhibitFormComponent implements OnInit {
 
     const exhibit = new Exhibit(
       '',
-      this.exhibitForm.get('name').value,
+      /*this.exhibitForm.get('name').value*/ this.filename,
       <CHOType>this.exhibitForm.get('type').value,
       this.exhibitForm.get('description').value,
       '',
@@ -101,6 +114,8 @@ export class ExhibitFormComponent implements OnInit {
     );
 
     this._vrem_service.uploadExhibit(exhibitUpload).pipe(first(), map(e => true), catchError(() => of(false))).subscribe(s => console.log(s));
+
+    this._snackbar.open(`Exhibit '${this.filename}' saved successfully!`, null, <MatSnackBarConfig>{duration : 2500});
   }
 
 }
