@@ -9,7 +9,7 @@ import {CorridorInspectorComponent} from './corridor/corridor-inspector.componen
 import {SharedComponentsModule} from '../../shared/shared-components.module';
 //import {RoomCanvasComponent} from './room/room-canvas.component';
 import {WallInspectorComponent} from './wall/wall-inspector.component';
-//import {WallCanvasComponent} from './wall/wall-canvas.component';
+import {WallCanvasComponent} from './wall/wall-canvas.component';
 import {ExhibitInspectorComponent} from './exhibit/exhibit-inspector.component';
 
 @NgModule({
