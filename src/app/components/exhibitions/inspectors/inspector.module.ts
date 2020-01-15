@@ -13,7 +13,7 @@ import {WallCanvasComponent} from './wall/wall-canvas.component';
 import {ExhibitInspectorComponent} from './exhibit/exhibit-inspector.component';
 
 @NgModule({
-    declarations: [ ExhibitionInspectorComponent, RoomInspectorComponent, CorridorInspectorComponent, WallInspectorComponent, ExhibitInspectorComponent ],
+    declarations: [ExhibitionInspectorComponent, RoomInspectorComponent, CorridorInspectorComponent, WallInspectorComponent, ExhibitInspectorComponent, WallCanvasComponent],
     imports: [ BrowserModule, MaterialModule, FormsModule, SharedComponentsModule ],
     exports: [ ExhibitionInspectorComponent, RoomInspectorComponent, CorridorInspectorComponent, WallInspectorComponent, ExhibitInspectorComponent]
 })
