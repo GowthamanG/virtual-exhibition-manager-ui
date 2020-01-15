@@ -49,9 +49,9 @@ export class ExhibitFormComponent implements OnInit {
       console.log(event.target.files);
       this.filename = event.target.files[0].name.substring(0, event.target.files[0].name.length - 4);
 
-      if (event.target.files[0].type.startWith('image/')) {
+      /*if (event.target.files[0].type.startWith('image/')) {
         this.type_image = true;
-      } //TODO check type for model
+      } //TODO check type for model*/
 
 
       reader.readAsDataURL(file);
