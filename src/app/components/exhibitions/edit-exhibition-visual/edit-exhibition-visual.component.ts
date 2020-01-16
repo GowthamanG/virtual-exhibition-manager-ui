@@ -118,6 +118,10 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
       this.wall_width_scaled = Math.sqrt(Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[3].x, 2) + Math.pow(_wall.wallCoordinates[2].y - _wall.wallCoordinates[3].y, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[3].z, 2));
       this.wall_height_scaled = Math.sqrt(Math.pow(_wall.wallCoordinates[0].x - _wall.wallCoordinates[2].x, 2) + Math.pow(_wall.wallCoordinates[0].y - _wall.wallCoordinates[2].y, 2) + Math.pow(_wall.wallCoordinates[0].z - _wall.wallCoordinates[2].z, 2));
 
+      console.log(this.wall_width);
+      console.log(this.wall_width_scaled);
+      console.log(this.wall_height);
+      console.log(this.wall_height_scaled);
       // Scaled wall
       if (this.wall_width > this.wall_width_scaled) {
         ratio_wall = this.wall_width / this.wall_height_scaled;
@@ -129,7 +133,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
           this.two_height_scaled = elem.clientHeight;
           this.two_width_scaled = this.two_height_scaled * ratio_wall;
           this.pix_per_m = elem.clientHeight / this.wall_height_scaled;
-          elem.style.width = this.two_width;
+          elem.style.width = this.two_width_scaled;
         }
       } else {
         ratio_wall = this.wall_width_scaled / this.wall_height_scaled;
@@ -184,12 +188,12 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
 
         start_1_x = 0;
         start_1_y = this.two_height_scaled;
-        end_1_x = (this.two_width   - this.two_width / ratio) / 2;
+        end_1_x = (this.two_width_scaled   - this.two_width_scaled / ratio) / 2;
         end_1_y = 0;
 
-        start_2_x = this.two_width;
+        start_2_x = this.two_width_scaled;
         start_2_y = this.two_height_scaled;
-        end_2_x = ((this.two_width - this.two_width / ratio) / 2) + this.two_width / ratio;
+        end_2_x = ((this.two_width_scaled - this.two_width_scaled / ratio) / 2) + this.two_width_scaled / ratio;
         end_2_y = 0;
 
       } else {
@@ -543,22 +547,22 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
 
       if (that.current_wall._belongsTo.ceiling_scale !== 1.0) {
 
-        let ratio_width = that.wall_width_scaled / that.wall_width;
-        let ratio_height = that.wall_height_scaled / that.wall_height;
-        let offset_width = (that.two_width_scaled - that.two_width_scaled / ratio_width) / 2;
-        let offset_height = (that.two_height_scaled - that.two_height_scaled / ratio_height) / 2;
-
         if (that.wall_width > that.wall_width_scaled) {
+
           if (image === undefined) {
-            art = that.two_global.makeSprite(path, e.position.x * that.pix_per_m, that.two_height_scaled - e.position.y * that.pix_per_m - offset_height);
+            art = that.two_global.makeSprite(path, e.position.x * that.pix_per_m, that.two_height_scaled - e.position.y * that.pix_per_m);
           } else {
-            art = that.two_global.makeSprite(image, e.position.x * that.pix_per_m, that.two_height_scaled - e.position.y * that.pix_per_m - offset_height);
+            art = that.two_global.makeSprite(image, e.position.x * that.pix_per_m, that.two_height_scaled - e.position.y * that.pix_per_m);
           }
         } else {
+
+          let ratio_width = that.wall_width_scaled / that.wall_width;
+          let offset_width = ((that.two_width_scaled - that.two_width_scaled / ratio_width) / 2);
+
           if (image === undefined) {
-            art = that.two_global.makeSprite(path, e.position.x * that.pix_per_m + offset_width, that.two_height_scaled - e.position.y * that.pix_per_m - offset_height);
+            art = that.two_global.makeSprite(path, e.position.x * that.pix_per_m + offset_width, that.two_height_scaled - e.position.y * that.pix_per_m);
           } else {
-            art = that.two_global.makeSprite(image, e.position.x * that.pix_per_m + offset_width, that.two_height_scaled - e.position.y * that.pix_per_m - offset_height);
+            art = that.two_global.makeSprite(image, e.position.x * that.pix_per_m + offset_width, that.two_height_scaled - e.position.y * that.pix_per_m);
           }
         }
 
@@ -584,11 +588,6 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
     let offset_x: number;
     let offset_y: number;
 
-    let ratio_width = that.wall_width_scaled / that.wall_width;
-    let ratio_height = that.wall_height_scaled / that.wall_height;
-    let offset_width = (that.two_width_scaled - that.two_width_scaled / ratio_width) / 2;
-    let offset_height = (that.two_height_scaled - that.two_height_scaled / ratio_height) / 2;
-
     const drag = function (e) {
       e.preventDefault();
       let x = e.clientX - offset_x;
@@ -604,10 +603,15 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
       that.lookup_table[shape.id].position.x = shape.translation.x / that.pix_per_m;
       if (that.current_wall._belongsTo.ceiling_scale !== 1.0) {
         if (that.wall_width > that.wall_width_scaled) {
-          that.lookup_table[shape.id].position.y = ((that.two_height_scaled - shape.translation.y) / that.pix_per_m) - offset_height / that.pix_per_m;
+          //that.lookup_table[shape.id].position.y = ((that.two_height_scaled - shape.translation.y) / that.pix_per_m) - offset_height / that.pix_per_m;
+          that.lookup_table[shape.id].position.y = ((that.two_height_scaled - shape.translation.y) / that.pix_per_m);
         } else {
+
+          let ratio_width = that.wall_width_scaled / that.wall_width;
+          let offset_width = (that.two_width_scaled - that.two_width_scaled / ratio_width) / 2;
+
           that.lookup_table[shape.id].position.x -= offset_width / that.pix_per_m;
-          that.lookup_table[shape.id].position.y = ((that.two_height_scaled - shape.translation.y) / that.pix_per_m) - offset_height / that.pix_per_m;
+          that.lookup_table[shape.id].position.y = ((that.two_height_scaled - shape.translation.y) / that.pix_per_m);
         }
       } else {
         that.lookup_table[shape.id].position.y = (that.two_height - shape.translation.y) / that.pix_per_m;
