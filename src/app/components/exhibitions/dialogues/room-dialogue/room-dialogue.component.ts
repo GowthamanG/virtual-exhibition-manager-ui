@@ -192,21 +192,33 @@ export class RoomDialogueComponent implements OnInit, AfterViewInit {
     const grid_size_y = this.contextSurface.canvas.height / grid_size;
 
     for (let i = 1; i < grid_size; i++) {
+      if (i !== (grid_size / 2)) {
+        this.contextSurface.strokeStyle = '#e9e9e9';
+        this.contextSurface.beginPath();
+        this.contextSurface.moveTo(grid_size_x * i, 0);
+        this.contextSurface.lineTo(grid_size_x * i, this.canvas_surface_height);
+        this.contextSurface.stroke();
+
+        this.contextSurface.beginPath();
+        this.contextSurface.moveTo(0, grid_size_y * i);
+        this.contextSurface.lineTo(this.canvas_surface_width, grid_size_y * i);
+        this.contextSurface.stroke();
+      }
+    }
+
+    for (let i = 1; i < grid_size; i++) {
       if (i === (grid_size / 2)) {
         this.contextSurface.strokeStyle = '#000000';
-      } else {
-        this.contextSurface.strokeStyle = '#e9e9e9';
+        this.contextSurface.beginPath();
+        this.contextSurface.moveTo(grid_size_x * i, 0);
+        this.contextSurface.lineTo(grid_size_x * i, this.canvas_surface_height);
+        this.contextSurface.stroke();
+
+        this.contextSurface.beginPath();
+        this.contextSurface.moveTo(0, grid_size_y * i);
+        this.contextSurface.lineTo(this.canvas_surface_width, grid_size_y * i);
+        this.contextSurface.stroke();
       }
-
-      this.contextSurface.beginPath();
-      this.contextSurface.moveTo(grid_size_x * i, 0);
-      this.contextSurface.lineTo(grid_size_x * i, this.canvas_surface_height);
-      this.contextSurface.stroke();
-
-      this.contextSurface.beginPath();
-      this.contextSurface.moveTo(0, grid_size_y * i);
-      this.contextSurface.lineTo(this.canvas_surface_width, grid_size_y * i);
-      this.contextSurface.stroke();
     }
   }
 
