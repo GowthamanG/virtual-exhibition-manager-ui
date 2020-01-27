@@ -47,6 +47,58 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   private wall_height: number;
   private wall_height_scaled: number;
 
+  private width_temp_0_3: number;
+  private width_temp_2_1: number;
+
+  private trapezoid_1 = false; //longest side below
+
+  /**       ---
+   *      .     .
+   *    .         .
+   *  .            .
+   * ----------------
+   *
+   * widths could have different size
+   */
+
+  private trapezoid_2 = false; //longest side above
+
+  /**
+   *
+   * ----------------
+   *  .            .
+   *    .        .
+   *      .    .
+   *        ---
+   *
+   *  widths could have different size
+   */
+
+  private rectangle_inclined_1 = false;
+
+  /**
+   *  ----------------
+   *    .               .
+   *      .               .
+   *        .               .
+   *          ----------------
+   *
+   * widths could have different size
+   */
+
+  private rectangle_inclined_2 = false;
+
+  /**
+   *        ----------------
+   *      .               .
+   *    .               .
+   *  .               .
+   * ----------------
+   *
+   * widths could have different size
+   *
+   */
+
   ngAfterViewInit(): void {
     this._roomDataSources.subscribe(x => this.current_wall = x[0].walls[0]);
     this.drawWall(this.current_wall);
@@ -92,6 +144,19 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
       elem.style.width = this.two_width;
     }
 
+    let draw_surface =  function (width: number, height: number, that) {
+      let params = {width: width, height: height};
+      that.two_global = new Two(params).appendTo(elem);
+
+      let wall = that.two_global.makeRectangle(0, 0, width, height);
+      wall.center();
+
+      wall.translation.set(that.two_global.width / 2, that.two_global.height / 2);
+      wall.scale = 1;
+      wall.fill = '#EEEEEE';
+      wall.noStroke();
+    };
+
 
     if (_room.ceiling_scale !== 1.0) {
 
@@ -116,12 +181,83 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
       _wall.wallCoordinates[3].z = midOfCeiling.z + ((_wall.wallCoordinates[3].z - midOfCeiling.z) * _room.ceiling_scale);
 
       this.wall_width_scaled = Math.sqrt(Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[3].x, 2) + Math.pow(_wall.wallCoordinates[2].y - _wall.wallCoordinates[3].y, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[3].z, 2));
-      this.wall_height_scaled = Math.sqrt(Math.pow(_wall.wallCoordinates[0].x - _wall.wallCoordinates[2].x, 2) + Math.pow(_wall.wallCoordinates[0].y - _wall.wallCoordinates[2].y, 2) + Math.pow(_wall.wallCoordinates[0].z - _wall.wallCoordinates[2].z, 2));
+      /*this.wall_height_scaled = Math.pow(_wall.wallCoordinates[3].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[3].y - _wall.wallCoordinates[0].y, 2) + Math.pow(_wall.wallCoordinates[3].z - _wall.wallCoordinates[0].z, 2);
+      console.log('height 1: ' + this.wall_height_scaled);
+      this.wall_height_scaled -= (Math.pow(_wall.wallCoordinates[3].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[3].z - _wall.wallCoordinates[0].z, 2));
+      console.log('height 1: ' + (Math.pow(_wall.wallCoordinates[3].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[3].z - _wall.wallCoordinates[0].z, 2)));
+      this.wall_height_scaled = Math.sqrt(Math.abs(this.wall_height_scaled));*/
 
-      console.log(this.wall_width);
-      console.log(this.wall_width_scaled);
-      console.log(this.wall_height);
-      console.log(this.wall_height_scaled);
+      let width_0_2 = Math.sqrt(Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[2].y - _wall.wallCoordinates[0].y, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[0].z, 2));
+      let width_2_1 = Math.sqrt(Math.pow(_wall.wallCoordinates[1].x - _wall.wallCoordinates[2].x, 2) + Math.pow(_wall.wallCoordinates[1].y - _wall.wallCoordinates[2].y, 2) + Math.pow(_wall.wallCoordinates[1].z - _wall.wallCoordinates[2].z, 2));
+      // Heronsche Flächenformel https://de.wikipedia.org/wiki/Dreieck
+      let s = (this.wall_width_scaled + + width_0_2 + width_2_1) / 2;
+      this.wall_height_scaled = (2 * Math.sqrt(s * (s - width_0_2) * (s - width_2_1) * (s - this.wall_width_scaled)) / this.wall_width_scaled);
+
+      /*let width_temp_0_3 = Math.sqrt(Math.pow(_wall.wallCoordinates[3].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[3].z - _wall.wallCoordinates[0].z, 2)); // length between wall coordinate 0 and 3, without y
+      let width_temp_2_1 = Math.sqrt(Math.pow(_wall.wallCoordinates[1].x - _wall.wallCoordinates[2].x, 2) + Math.pow(_wall.wallCoordinates[1].z - _wall.wallCoordinates[2].z, 2)); // length between wall coordinate 2 and 1, without y*/
+
+      this.width_temp_0_3 = Math.pow(_wall.wallCoordinates[3].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[3].y - _wall.wallCoordinates[0].y, 2) + Math.pow(_wall.wallCoordinates[3].z - _wall.wallCoordinates[0].z, 2); // length between wall coordinate 0 and 3, without y
+      this.width_temp_0_3 -= Math.pow(this.wall_height_scaled, 2);
+      this.width_temp_0_3 = Math.sqrt(Math.abs(this.width_temp_0_3));
+
+      this.width_temp_2_1 = Math.pow(_wall.wallCoordinates[1].x - _wall.wallCoordinates[2].x, 2) + Math.pow(_wall.wallCoordinates[1].y - _wall.wallCoordinates[2].y, 2) + Math.pow(_wall.wallCoordinates[1].z - _wall.wallCoordinates[2].z, 2); // length between wall coordinate 0 and 3, without y
+      this.width_temp_2_1 -= Math.pow(this.wall_height_scaled, 2);
+      this.width_temp_2_1 = Math.sqrt(Math.abs(this.width_temp_2_1));
+
+
+      /*if (width_temp_0_3 < width_temp_2_1) {
+        this.rectangle_inclined_1 = true;
+      } else if (width_temp_0_3 > width_temp_2_1) {
+        this.rectangle_inclined_2 = true;
+      } else {
+        if (this.wall_width > this.wall_width_scaled) {
+          this.trapezoid_1 = true;
+        } else {
+          this.trapezoid_2 = true;
+        }
+      }*/
+
+      if (this.wall_width > this.wall_width_scaled) {
+        if (this.width_temp_0_3 > this.width_temp_2_1) {
+          if (this.width_temp_0_3 > this.wall_width) {
+            this.rectangle_inclined_2 = true;
+          } else {
+            this.trapezoid_1 = true;
+          }
+        } else if (this.width_temp_0_3 < this.width_temp_2_1) {
+          if (this.width_temp_2_1 > this.wall_width) {
+            this.rectangle_inclined_1 = true;
+          } else {
+            this.trapezoid_1 = true;
+          }
+        } else {
+          this.trapezoid_1 = true;
+        }
+      } else if (this.wall_width < this.wall_width_scaled) {
+        if (this.width_temp_0_3 > this.width_temp_2_1) {
+          if (this.width_temp_0_3 > this.wall_width_scaled) {
+            this.rectangle_inclined_2 = true;
+          } else {
+            this.trapezoid_2 = true;
+          }
+        } else if (this.width_temp_0_3 < this.width_temp_2_1) {
+          if (this.width_temp_2_1 > this.wall_width_scaled) {
+            this.rectangle_inclined_1 = true;
+          } else {
+            this.trapezoid_2 = true;
+          }
+        } else {
+          this.trapezoid_2 = true;
+        }
+      } else {
+        if (this.width_temp_0_3 > this.width_temp_2_1) {
+          this.rectangle_inclined_2 = true;
+        } else if (this.width_temp_0_3 < this.width_temp_2_1) {
+          this.rectangle_inclined_1 = true;
+        }
+      }
+
+      /*
       // Scaled wall
       if (this.wall_width > this.wall_width_scaled) {
         ratio_wall = this.wall_width / this.wall_height_scaled;
@@ -147,30 +283,39 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
           this.pix_per_m = elem.clientHeight / this.wall_height_scaled;
           elem.style.width = this.two_width_scaled;
         }
-      }
+      }*/
 
-      if (this.wall_width > this.wall_width_scaled) {
-        let params = {width: this.two_width, height: this.two_height_scaled};
-        this.two_global = new Two(params).appendTo(elem);
+      let set_Vis_size_params = function (width: number, height: number, that) {
+        ratio_wall = width / height;
+        if (ratio_wall > ratio_elem) {
+          that.two_width_scaled = elem.clientWidth;
+          that.two_height_scaled = that.two_width_scaled / ratio_wall;
+          that.pix_per_m = that.two_width_scaled / width;
+        } else {
+          that.two_height_scaled = elem.clientHeight;
+          that.two_width_scaled = that.two_height_scaled * ratio_wall;
+          that.pix_per_m = elem.clientHeight / height;
+          elem.style.width = that.two_width_scaled;
+        }
+      };
 
-        let wall = this.two_global.makeRectangle(0, 0, this.two_width, this.two_height_scaled);
-        wall.center();
-
-        wall.translation.set(this.two_global.width / 2, this.two_global.height / 2);
-        wall.scale = 1;
-        wall.fill = '#EEEEEE';
-        wall.noStroke();
-      } else {
-        let params = {width: this.two_width_scaled, height: this.two_height_scaled};
-        this.two_global = new Two(params).appendTo(elem);
-
-        let wall = this.two_global.makeRectangle(0, 0, this.two_width_scaled, this.two_height_scaled);
-        wall.center();
-
-        wall.translation.set(this.two_global.width / 2, this.two_global.height / 2);
-        wall.scale = 1;
-        wall.fill = '#EEEEEE';
-        wall.noStroke();
+      // Scaled wall
+      if (this.trapezoid_1) {
+        set_Vis_size_params(this.wall_width, this.wall_height_scaled, this);
+        draw_surface(this.two_width_scaled, this.two_height_scaled, this);
+        console.log('trapezoid_1');
+      } else if (this.trapezoid_2) {
+        set_Vis_size_params(this.wall_width_scaled, this.wall_height_scaled, this);
+        draw_surface(this.two_width_scaled, this.two_height_scaled, this);
+        console.log('trapezoid_2');
+      } else if (this.rectangle_inclined_1) {
+        set_Vis_size_params(this.width_temp_2_1, this.wall_height_scaled, this);
+        draw_surface(this.two_width_scaled, this.two_height_scaled, this);
+        console.log('rectangle_inclined_1');
+      } else if (this.rectangle_inclined_2) {
+        set_Vis_size_params(this.width_temp_0_3, this.wall_height_scaled, this);
+        draw_surface(this.two_width_scaled, this.two_height_scaled, this);
+        console.log('rectangle_inclined_2');
       }
 
       let start_1_x: number;
@@ -182,33 +327,102 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
       let end_2_x: number;
       let end_2_y: number;
 
-      if (this.wall_width > this.wall_width_scaled) {
+      if (this.trapezoid_1) {
 
         let ratio = this.wall_width / this.wall_width_scaled;
+        //let ratio_2 = this.wall_width / Math.sqrt(Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[0].z, 2));
+        let ratio_2 = Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[2].y - _wall.wallCoordinates[0].y, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[0].z, 2);
+        ratio_2 -= Math.pow(this.wall_height_scaled, 2);
+        ratio_2 = Math.sqrt(Math.abs(ratio_2));
+        ratio_2 = this.wall_width / ratio_2;
 
         start_1_x = 0;
         start_1_y = this.two_height_scaled;
-        end_1_x = (this.two_width_scaled   - this.two_width_scaled / ratio) / 2;
+        end_1_x = this.two_width_scaled / ratio_2;
         end_1_y = 0;
 
         start_2_x = this.two_width_scaled;
         start_2_y = this.two_height_scaled;
-        end_2_x = ((this.two_width_scaled - this.two_width_scaled / ratio) / 2) + this.two_width_scaled / ratio;
+        end_2_x = end_1_x + this.two_width_scaled / ratio;
         end_2_y = 0;
 
-      } else {
-
-        let ratio = this.wall_width_scaled / this.wall_width;
+        /*
+        let ratio = this.wall_width / this.wall_width_scaled;
+        let ratio_2 = Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[2].y - _wall.wallCoordinates[0].y, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[0].z, 2);
+        ratio_2 -= Math.pow(this.wall_height_scaled, 2);
+        ratio_2 = Math.sqrt(Math.abs(ratio_2));
 
         start_1_x = 0;
-        start_1_y = 0;
-        end_1_x = (this.two_width_scaled - this.two_width_scaled / ratio) / 2;
-        end_1_y = this.two_height_scaled;
+        start_1_y = this.two_height_scaled;
+        end_1_x = this.two_width_scaled / ratio_2;
+        end_1_y = 0;
 
         start_2_x = this.two_width_scaled;
-        start_2_y = 0;
-        end_2_x = ((this.two_width_scaled - this.two_width_scaled / ratio) / 2) + this.two_width_scaled / ratio;
-        end_2_y = this.two_height_scaled;
+        start_2_y = this.two_height_scaled;
+        end_2_x = end_1_x + this.two_width / ratio;
+        end_2_y = 0;
+         */
+
+      } else if (this.trapezoid_2) {
+
+        let ratio = this.wall_width_scaled / this.wall_width;
+        //let ratio_2 = this.wall_width_scaled / Math.sqrt(Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[0].z, 2));
+
+        let ratio_2 = Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[2].y - _wall.wallCoordinates[0].y, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[0].z, 2);
+        ratio_2 -= Math.pow(this.wall_height_scaled, 2);
+        ratio_2 = Math.sqrt(Math.abs(ratio_2));
+        ratio_2 = this.wall_width_scaled / ratio_2;
+
+        start_1_x = this.two_width_scaled / ratio_2;
+        start_1_y = this.two_height_scaled;
+        end_1_x = 0;
+        end_1_y = 0;
+
+        start_2_x = start_1_x + this.two_width_scaled / ratio;
+        start_2_y = this.two_height_scaled;
+        end_2_x = this.two_width_scaled;
+        end_2_y = 0;
+
+      } else if (this.rectangle_inclined_1) {
+
+        let ratio = this.width_temp_2_1 / this.wall_width_scaled;
+        //let ratio_2 = width_temp_2_1 / Math.sqrt(Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[0].z, 2));
+
+        let ratio_2 = Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[2].y - _wall.wallCoordinates[0].y, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[0].z, 2);
+        ratio_2 -= Math.pow(this.wall_height_scaled, 2);
+        ratio_2 = Math.sqrt(Math.abs(ratio_2));
+        ratio_2 = this.width_temp_2_1 / ratio_2;
+
+        start_1_x = this.two_width_scaled / ratio_2;
+        start_1_y = this.two_height_scaled;
+        end_1_x = 0;
+        end_1_y = 0;
+
+        start_2_x = this.two_width_scaled;
+        start_2_y = this.two_height_scaled;
+        end_2_x = this.two_width_scaled / ratio;
+        end_2_y = 0;
+
+      } else if (this.rectangle_inclined_2) {
+
+        let ratio = this.width_temp_0_3 / this.wall_width;
+        //let ratio_2 = width_temp_0_3 / Math.sqrt(Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[0].z, 2));
+
+        let ratio_2 = Math.pow(_wall.wallCoordinates[2].x - _wall.wallCoordinates[0].x, 2) + Math.pow(_wall.wallCoordinates[2].y - _wall.wallCoordinates[0].y, 2) + Math.pow(_wall.wallCoordinates[2].z - _wall.wallCoordinates[0].z, 2);
+        ratio_2 -= Math.pow(this.wall_height_scaled, 2);
+        ratio_2 = Math.sqrt(Math.abs(ratio_2));
+        ratio_2 = this.width_temp_0_3 / ratio_2;
+
+        start_1_x = 0;
+        start_1_y = this.two_height_scaled;
+        end_1_x = this.two_width_scaled / ratio_2;
+        end_1_y = 0;
+
+        start_2_x = this.two_width_scaled / ratio;
+        start_2_y = this.two_height_scaled;
+        end_2_x = this.two_width_scaled;
+        end_2_y = 0;
+
       }
 
       let wall_boundary_1 = this.two_global.makeLine(start_1_x, start_1_y, end_1_x, end_1_y);
@@ -223,35 +437,28 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
       this.two_global.update();
 
     } else {
-
-      let params = {width: this.two_width, height: this.two_height};
-      this.two_global = new Two(params).appendTo(elem);
-
-      let wall = this.two_global.makeRectangle(0, 0, this.two_width, this.two_height);
-      wall.center();
-
-      wall.translation.set(this.two_global.width / 2, this.two_global.height / 2);
-      wall.scale = 1;
-      wall.fill = '#EEEEEE';
-      wall.noStroke();
-
-      this.art_global = this.two_global.makeGroup();
-      this.two_global.update();
+      draw_surface(this.two_width, this.two_height, this);
     }
 
     _room = null;
     _wall = null;
+    this.trapezoid_1 = false;
+    this.trapezoid_2 = false;
+    this.rectangle_inclined_1 = false;
+    this.rectangle_inclined_2 = false;
   }
 
   drop(event: CdkDragDrop<string[]>) {
     if (this.current_wall._belongsTo.ceiling_scale !== 1.0) {
-      if (this.wall_width > this.wall_width_scaled) {
+      /*if (this.wall_width > this.wall_width_scaled) {
         event.item.data.position.x = (this.two_width / 2) / this.pix_per_m;
         event.item.data.position.y = (this.two_height_scaled / 2) / this.pix_per_m;
       } else {
         event.item.data.position.x = (this.two_width_scaled / 2) / this.pix_per_m;
         event.item.data.position.y = (this.two_height_scaled / 2) / this.pix_per_m;
-      }
+      }*/
+      event.item.data.position.x = (this.two_width_scaled / 2) / this.pix_per_m;
+      event.item.data.position.y = (this.two_height_scaled / 2) / this.pix_per_m;
     } else {
       event.item.data.position.x = (this.two_width / 2) / this.pix_per_m;
       event.item.data.position.y = (this.two_height / 2) / this.pix_per_m;
@@ -565,7 +772,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
             art = that.two_global.makeSprite(image, e.position.x * that.pix_per_m + offset_width, that.two_height_scaled - e.position.y * that.pix_per_m);
           }
         }
-
+        
       } else {
         if (image === undefined) {
           art = that.two_global.makeSprite(path, e.position.x * that.pix_per_m, that.two_height - e.position.y * that.pix_per_m);
@@ -573,6 +780,44 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
           art = that.two_global.makeSprite(image, e.position.x * that.pix_per_m, that.two_height - e.position.y * that.pix_per_m);
         }
       }
+
+      /*if (that.trapezoid_1) {
+        if (image === undefined) {
+          art = that.two_global.makeSprite(path, e.position.x * that.pix_per_m, that.two_height_scaled - e.position.y * that.pix_per_m);
+        } else {
+          art = that.two_global.makeSprite(image, e.position.x * that.pix_per_m, that.two_height_scaled - e.position.y * that.pix_per_m);
+        }
+      } else if (that.trapezoid_2) {
+        let ratio_width = that.wall_width_scaled / that.wall_width;
+        let offset_width = ((that.two_width_scaled - that.two_width_scaled / ratio_width) / 2);
+
+        if (image === undefined) {
+          art = that.two_global.makeSprite(path, e.position.x * that.pix_per_m + offset_width, that.two_height_scaled - e.position.y * that.pix_per_m);
+        } else {
+          art = that.two_global.makeSprite(image, e.position.x * that.pix_per_m + offset_width, that.two_height_scaled - e.position.y * that.pix_per_m);
+        }
+
+      } else if (that.rectangle_inclined_1) {
+        let ratio_width = that.width_temp_2_1 / that.wall_width;
+        let offset_width = ((that.two_width_scaled - that.two_width_scaled / ratio_width) / 2);
+
+        if (image === undefined) {
+          art = that.two_global.makeSprite(path, e.position.x * that.pix_per_m + offset_width, that.two_height_scaled - e.position.y * that.pix_per_m);
+        } else {
+          art = that.two_global.makeSprite(image, e.position.x * that.pix_per_m + offset_width, that.two_height_scaled - e.position.y * that.pix_per_m);
+        }
+
+      } else if (that.rectangle_inclined_2) {
+        let ratio_width = that.width_temp_0_3 / that.wall_width;
+        let offset_width = ((that.two_width_scaled - that.two_width_scaled / ratio_width) / 2);
+
+        if (image === undefined) {
+          art = that.two_global.makeSprite(path, e.position.x * that.pix_per_m + offset_width, that.two_height_scaled - e.position.y * that.pix_per_m);
+        } else {
+          art = that.two_global.makeSprite(image, e.position.x * that.pix_per_m + offset_width, that.two_height_scaled - e.position.y * that.pix_per_m);
+        }
+
+      }*/
 
       art.scale = (e.size.x * that.pix_per_m) / art.width;
       that.art_global.add(image);
