@@ -491,7 +491,18 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   }
 
   public addNewCorridor() {
-    this._editor.current.addCorridor(Corridor.empty());
+    const c: Corridor = Corridor.empty();
+
+    for (let i = 0; i < 2; i++) {
+      const w = CorridorWall.empty(i);
+      w.wallCoordinates.push({x: 0, y: 0, z: 0});
+      w.wallCoordinates.push({x: 0, y: 0, z: 0});
+      w.wallCoordinates.push({x: 0, y: 0, z: 0});
+      w.wallCoordinates.push({x: 0, y: 0, z: 0});
+      c.walls.push(w);
+      w._belongsTo = c;
+    }
+    this._editor.current.addCorridor(c);
   }
 
   /**
