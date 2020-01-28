@@ -1,27 +1,29 @@
-import {IRoom} from '../interfaces/room/room.interface';
-import {Vector3f} from '../interfaces/general/vector-3f.model';
+/*
+import {IRoom} from '../../interfaces/cuboidRoom/room.interface';
+import {Vector3f} from '../../interfaces/general/vector-3f.model';
 import {Wall} from './wall.model';
-import {Exhibit} from './exhibit.model';
-import {Exhibition} from './exhibition.model';
-import {Directions} from '../interfaces/room/direction.model';
+import {Exhibit} from '../exhibit.model';
+import {Exhibition} from '../exhibition.model';
+import {Directions} from '../../interfaces/cuboidRoom/direction.model';
+import {Corridor} from '../corridor/corridor.model';
 
 export class Room implements IRoom {
 
-    /** List of @type {Exhibit}s placed directly in this @type {Room}. */
+    /!** List of @type {Exhibit}s placed directly in this @type {Room}. *!/
     public exhibits: Exhibit[] = [];
 
-    /** List of @type {Wall}s that make up this @type {Room}. */
+    /!** List of @type {Wall}s that make up this @type {Room}. *!/
     public walls: Wall[] = [];
 
-    /** Reference to the {Exhibition} this {Room} belongs to. */
-    public _belongsTo: (Exhibition | null);
+    /!** Reference to the {Exhibition} this {Room} belongs to. *!/
+    public _belongsTo: (Exhibition | Corridor | null);
 
-    /**
+    /!**
      * Copies a @type {IRoom} to a new @type {Room} object.
      *
      * @param r IRoom object
      * @param target The target for the Proxy object.
-     */
+     *!/
     public static copyAsProxy(r: IRoom, target: object = {}): Room {
         const n = new Proxy(new Room(r.text, r.ambient, r.ceiling, r.floor, r.position, r.entrypoint, r.size), target);
         n.walls = new Proxy([], target);
@@ -39,9 +41,9 @@ export class Room implements IRoom {
         return n;
     }
 
-    /**
+    /!**
      * Creates and returns an empty {Room}
-     */
+     *!/
     public static empty(): Room {
         const room = new Room(
             'Empty room', null, 'NWood', 'NWood',
@@ -55,7 +57,7 @@ export class Room implements IRoom {
         return room;
     }
 
-    /**
+    /!**
      * Default constructor for @type {Room}.
      *
      * @param text
@@ -65,17 +67,17 @@ export class Room implements IRoom {
      * @param position
      * @param entrypoint
      * @param size
-     */
+     *!/
     constructor(public text: string, public ambient: string, public ceiling: string, public floor: string,
                 public position: Vector3f, public entrypoint: Vector3f, public size: Vector3f) {}
 
 
-    /**
+    /!**
      * Adds an {Exhibit} to this {Room}
      *
      * @param e The {Exhibit} to add.
      * @return True on success, false otherwise.
-     */
+     *!/
     public addExhibit(e: Exhibit) {
         if (e.type === 'MODEL') {
             this.exhibits.push(e);
@@ -86,12 +88,12 @@ export class Room implements IRoom {
         }
     }
 
-    /**
+    /!**
      * Removes an {Exhibit} from this {Room}
      *
      * @param e The {Exhibit} to remove OR its index.
      * @return True on success, false otherwise.
-     */
+     *!/
     public removeExhibit(e: (Exhibit | number)) {
         if (e instanceof Exhibit && e._belongsTo === this) {
             const idx = this.exhibits.indexOf(e);
@@ -107,3 +109,4 @@ export class Room implements IRoom {
         }
     }
 }
+*/

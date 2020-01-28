@@ -1,11 +1,11 @@
 
-<div class="full-width" [style.display]="'flex'" [style.justify-content]="'space-around'">
+<!--<div class="full-width" [style.display]="'flex'" [style.justify-content]="'space-around'">
     <app-room-canvas [room]="room" ></app-room-canvas>
 </div>
 
-<hr/>
+<hr/> -->
 
-<h4 class="mat-h4">General properties</h4>
+<h4 class="mat-h4"><b>General properties</b></h4>
 
 
 <mat-form-field class="full-width">
@@ -32,11 +32,15 @@
     </mat-select>
 </mat-form-field>
 
-<h4 class="mat-h4">Room geometry</h4>
+<h4 class="mat-h4"><b>Room geometry</b></h4>
 
 <app-vector3f-input [vector]="room.position" [name]="'Position'"></app-vector3f-input>
 
-<app-vector3f-input [vector]="room.size" [name]="'Size'" [labels]="['Width', 'Height', 'Depth']"></app-vector3f-input>
+<mat-form-field class="full-width">
+  <input matInput placeholder="Height" [(ngModel)]="room.height">
+</mat-form-field>
 
-<h4 class="mat-h4">Entrypoint</h4>
-<app-vector3f-input [vector]="room.entrypoint" [name]="'Entrypoint'" [show]="[true, false, true]" [labels]="['Entrypoint (x)', null, 'Entrypoint (y)']"></app-vector3f-input>
+
+
+<h4 class="mat-h4">Ceiling scale: {{room.ceiling_scale}} </h4>
+<mat-slider id="ceiling-scaling-slider" thumbLabel tickInterval="1" min="0" max="5" step="0.1" [(ngModel)]="room.ceiling_scale" ></mat-slider>

@@ -2,7 +2,7 @@
   <mat-drawer class="inspector" position="end" mode="side" opened>
     <h2 class="mat-h2">Available Exhibits</h2>
     <mat-list cdkDropList [cdkDropListConnectedTo]="vis" class="exhibit-list">
-      <mat-list-item *ngFor="let exhibit of (_exhibits|async)" class="exhibit-draggable" cdkDrag [cdkDragData]="exhibit" [cdkDragDisabled]="!(isSelectedWall|async)">
+      <mat-list-item *ngFor="let exhibit of (_exhibits|async)" class="exhibit-draggable" cdkDrag [cdkDragData]="exhibit" [cdkDragDisabled]="!(isSelectedRoomWall|async)">
         <img matListAvatar [src]="getPreview(exhibit)" alt="Art" style="border-radius: 0">
         <h4 mat-line>{{exhibit.name}}</h4>
         <img *cdkDragPreview [src]="getPreview(exhibit)" width="100px">
@@ -12,16 +12,26 @@
 
   <div cdkDropList #vis="cdkDropList" class="visualizer" (cdkDropListDropped)="drop($event)"></div>
 
+
+
   <div class="content" *ngIf="!!(exhibition|async)" (click)="exhibitionClicked($event)">
     <h1 class="mat-h1">Exhibition dashboard: {{(exhibition|async).name}} (ID={{(exhibition|async).shortId}})</h1>
 
-    <div>
-      <button mat-stroked-button color="primary" (click)="addNewRoom()">
-        <mat-icon>add</mat-icon>
-        Add new room
-      </button>
-    </div>
+    <div class="btnWrapper">
+      <div>
+        <button mat-stroked-button color="primary" mat-raised-button (click)="addNewRoom()">
+         <mat-icon>add</mat-icon>
+          Add new Room
+        </button>
+      </div>
 
+      <div>
+        <button mat-stroked-button color="primary" mat-raised-button (click)="addNewCorridor()">
+          <mat-icon>add</mat-icon>
+          Add new Corridor
+        </button>
+      </div>
+    </div>
 
     <div class="dashboard">
       <div *ngFor="let room of (exhibition|async).rooms" (click)="roomClicked($event, room)" [className]="(inspected|async)==room ? 'room-widget selected' : 'room-widget'">
@@ -72,9 +82,9 @@
           </mat-nested-tree-node>
 
 
-          <mat-nested-tree-node *matTreeNodeDef="let node; when: isWall">
+          <mat-nested-tree-node *matTreeNodeDef="let node; when: isRoomWall">
             <li>
-              <div [className]="(inspected|async)==node ? 'mat-tree-node selected' : 'mat-tree-node'" (click)="wallClicked($event, node)">
+              <div [className]="(inspected|async)==node ? 'mat-tree-node selected' : 'mat-tree-node'" (click)="roomWallClicked($event, node)">
                 <button mat-icon-button matTreeNodeToggle>
                   <mat-icon class="mat-icon-rtl-mirror">
                     {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
@@ -96,6 +106,81 @@
           </mat-tree-node>
         </mat-tree>
       </div>
+
+      <div *ngFor="let corridor of (exhibition|async).corridors" (click)="corridorClicked($event, corridor)" [className]="(inspected|async)==corridor ? 'corridor-widget selected' : 'corridor-widget'">
+
+        <div [style.display]="'flex'" [style.justify-content]="'space-between'">
+          <h2 class="mat-h2">{{corridor.text}}</h2>
+          <button mat-mini-fab color="warn" matTooltip="Delete room '{{corridor.text}}' from exhibition." (click)="removeCorridor(corridor)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <mat-tree [dataSource]="[corridor]" [treeControl]="treeControl" class="corridor-tree">
+
+          <mat-nested-tree-node *matTreeNodeDef="let node; when: isCorridor">
+            <ng-container matTreeNodeOutlet></ng-container>
+          </mat-nested-tree-node>
+
+          <mat-nested-tree-node *matTreeNodeDef="let node; when: isWallFiller">
+            <li>
+              <div class="mat-tree-node">
+                <button mat-icon-button matTreeNodeToggle>
+                  <mat-icon class="mat-icon-rtl-mirror">
+                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                  </mat-icon>
+                </button>
+                Walls ({{node.length}})
+              </div>
+              <ul [class.room-tree-invisible]="!treeControl.isExpanded(node)">
+                <ng-container matTreeNodeOutlet></ng-container>
+              </ul>
+            </li>
+          </mat-nested-tree-node>
+
+          <mat-nested-tree-node *matTreeNodeDef="let node; when: isExhibitFiller">
+            <li>
+              <div class="mat-tree-node">
+                <button mat-icon-button matTreeNodeToggle>
+                  <mat-icon class="mat-icon-rtl-mirror">
+                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                  </mat-icon>
+                </button>
+                3D Exhibits ({{node.length}})
+              </div>
+              <ul [class.room-tree-invisible]="!treeControl.isExpanded(node)">
+                <ng-container matTreeNodeOutlet></ng-container>
+              </ul>
+            </li>
+          </mat-nested-tree-node>
+
+
+          <mat-nested-tree-node *matTreeNodeDef="let node; when: isCorridorWall">
+            <li>
+              <div [className]="(inspected|async)==node ? 'mat-tree-node selected' : 'mat-tree-node'" (click)="corridorWallClicked($event, node)">
+                <button mat-icon-button matTreeNodeToggle>
+                  <mat-icon class="mat-icon-rtl-mirror">
+                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                  </mat-icon>
+                </button>
+                {{node.designation}} ({{node.numberOfExhibits}})
+              </div>
+              <ul [class.room-tree-invisible]="!treeControl.isExpanded(node)">
+                <ng-container matTreeNodeOutlet></ng-container>
+              </ul>
+            </li>
+          </mat-nested-tree-node>
+
+          <mat-tree-node *matTreeNodeDef="let node; when: isExhibit" >
+            <div [className]="(inspected|async)==node ? 'mat-tree-node selected' : 'mat-tree-node'" (click)="exhibitClicked($event, node)">
+              <p>Exhibit: {{node.name}}</p>
+              <button mat-icon-button (click)="removeExhibitClicked($event, node)" matTooltip="Remove exhibit from '{{node.location}}'."><mat-icon>delete</mat-icon></button>
+            </div>
+          </mat-tree-node>
+        </mat-tree>
+      </div>
+
+
     </div>
   </div>
 </mat-drawer-container>

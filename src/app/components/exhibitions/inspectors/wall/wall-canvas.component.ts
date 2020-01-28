@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, Input, ViewChild} from '@angular/core';
-import {Wall} from '../../../../model/implementations/wall.model';
+import {Wall} from '../../../../model/implementations/polygonalRoom/wall.model';
 import {VremApiService} from '../../../../services/http/vrem-api.service';
+import {EditorService} from '../../../../services/editor/editor.service';
 
 @Component({
     selector: 'app-wall-canvas',
@@ -8,9 +9,9 @@ import {VremApiService} from '../../../../services/http/vrem-api.service';
         <table>
             <tr><td colspan="3" style="text-align: center;">UP</td></tr>
             <tr>
-                <td>{{leftLabel}}</td>
+                <!--<td>{{leftLabel}}</td>-->
                 <td><canvas #canvas width="250" height="250"></canvas></td>
-                <td>{{rightLabel}}</td>
+                <!--<td>{{rightLabel}}</td>-->
             </tr>
             <tr><td colspan="3" style="text-align: center;">DOWN</td></tr>
         </table>
@@ -20,6 +21,8 @@ export class WallCanvasComponent implements AfterViewInit {
 
     /** The room displayed by this {RoomCanvasComponent}. */
     private _wall: Wall;
+    private _wall_width: number;
+    private _wall_height: number;
 
     /** The canvas used to draw the {Room} overview. */
     @ViewChild('canvas')
@@ -35,8 +38,9 @@ export class WallCanvasComponent implements AfterViewInit {
      * Default constructor.
      *
      * @param _service Reference to the {VremApiService}
+     * @param _editor
      */
-    constructor(private _service: VremApiService) {}
+    constructor(private _service: VremApiService, private _editor: EditorService) {}
 
     /**
      * Lifecycle Hook (onInit): Initialises the drawing context.
@@ -53,6 +57,8 @@ export class WallCanvasComponent implements AfterViewInit {
     @Input('wall')
     set wall(value: Wall) {
         this._wall = value;
+        this._wall_width = Math.sqrt(Math.pow(this._wall.wallCoordinates[0].x - this._wall.wallCoordinates[1].x, 2) + Math.pow(this._wall.wallCoordinates[0].z - this._wall.wallCoordinates[1].z, 2));
+        this._wall_height = this._wall.wallCoordinates[3].y;
         this._imageCache.clear();
     }
 
@@ -66,7 +72,7 @@ export class WallCanvasComponent implements AfterViewInit {
     /**
      * Label for the left side of the canvas.
      */
-    get leftLabel() {
+    /*get leftLabel() {
         switch (this._wall.direction) {
             case 'NORTH':
                 return 'W';
@@ -77,12 +83,12 @@ export class WallCanvasComponent implements AfterViewInit {
             case 'WEST':
                 return 'S';
         }
-    }
+    }*/
 
     /**
      * Label for the right side of the canvas.
      */
-    get rightLabel() {
+    /*get rightLabel() {
         switch (this._wall.direction) {
             case 'NORTH':
                 return 'E';
@@ -93,7 +99,7 @@ export class WallCanvasComponent implements AfterViewInit {
             case 'WEST':
                 return 'N';
         }
-    }
+    }*/
 
     /**
      * Re-draws the room preview.
@@ -125,15 +131,16 @@ export class WallCanvasComponent implements AfterViewInit {
 
         /* Calculate unit-size. */
         let ds = 0.0;
-        if (this._wall.width > this._wall.height) {
-            ds = cwidth / this._wall.width;
+
+        if (this._wall_width > this._wall_height) {
+            ds = cwidth / this._wall_width;
         } else {
-            ds = cheight / this._wall.height;
+            ds = cheight / this._wall_height;
         }
 
         /* Calculate offsets. */
-        const offsetX = (cwidth - this._wall.width * ds);
-        const offsetY =  (cheight - this._wall.height * ds);
+        const offsetX = (cwidth - this._wall_width * ds);
+        const offsetY =  (cheight - this._wall_height * ds);
 
         for (const e of this._wall.exhibits) {
             if (!this._imageCache.has(e.path)) {
@@ -158,15 +165,15 @@ export class WallCanvasComponent implements AfterViewInit {
     public drawWall(cwidth: number, cheight: number) {
         /* Calculate unit-size. */
         let ds = 0.0;
-        if (this._wall.width > this._wall.height) {
-            ds = cwidth / this._wall.width;
+        if (this._wall_width > this._wall_height) {
+            ds = cwidth / this._wall_width;
         } else {
-            ds = cheight / this._wall.height;
+            ds = cheight / this._wall_height;
         }
 
         /* Calculate offsets. */
-        const offsetX = (cwidth - this._wall.width * ds);
-        const offsetY =  (cheight - this._wall.height * ds);
+        const offsetX = (cwidth - this._wall_width * ds);
+        const offsetY =  (cheight - this._wall_height * ds);
 
         /* Set style for room walls. */
         this._context.fillStyle = '#CC3300';

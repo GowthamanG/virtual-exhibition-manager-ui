@@ -21,6 +21,10 @@
             <mat-icon aria-label="Reload exhibition" matTooltip="Reload exhibition from server">refresh</mat-icon>
         </button>
 
+      <button  *ngIf="hasActive" mat-icon-button (click)="handleHelpClick()">
+        <mat-icon aria-label="Help exhibiton" matTooltip="Help">help outline</mat-icon>
+      </button>
+
 
     </div>
 

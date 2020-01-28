@@ -6,7 +6,7 @@
   </mat-form-field>
   <br>
   <mat-form-field>
-    <input matInput formControlName="name" placeholder="Name">
+    <input matInput formControlName="name" placeholder="Name" [(ngModel)]="filename">
   </mat-form-field>
   <br>
   <mat-form-field>
@@ -23,6 +23,7 @@
     <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
     <input hidden (change)="onFileChange($event)" #fileInput type="file" id="file">
   <br>
+
   <mat-form-field>
     <input class="size" matInput #sizeWidth (change)="setHeight(sizeWidth.value)" formControlName="size_width" placeholder="Width"/>
   </mat-form-field>
@@ -38,4 +39,5 @@
   </mat-form-field>
   <br>
   <button mat-raised-button type="submit">Submit</button>
+  <button mat-raised-button type="reset" (click)="exhibitForm.reset()">Reset</button>
 </form>
