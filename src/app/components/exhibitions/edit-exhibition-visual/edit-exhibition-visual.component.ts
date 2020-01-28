@@ -400,7 +400,11 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   private _treeControl = new NestedTreeControl<any>(node => {
     if (node instanceof Room) {
       return [node.walls, node.exhibits];
+    } else if (node instanceof Corridor) {
+      return [node.walls, node.exhibits];
     } else if (node instanceof RoomWall) {
+      return node.exhibits;
+    } else if (node instanceof CorridorWall) {
       return node.exhibits;
     } else if (node instanceof Exhibit) {
       return [];
@@ -451,7 +455,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   /**
    * Getter for the tree control.
    */
-  get treeControl(): NestedTreeControl<(Room | RoomWall | Exhibit)> {
+  get treeControl(): NestedTreeControl<(Room | Corridor | RoomWall | CorridorWall | Exhibit)> {
     return this._treeControl;
   }
 
