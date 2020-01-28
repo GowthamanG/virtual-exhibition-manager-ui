@@ -491,7 +491,7 @@ export class EditExhibitionVisualComponent implements AfterViewInit {
   }
 
   public addNewCorridor() {
-    this._editor.current.addRoom(Room.empty());
+    this._editor.current.addCorridor(Corridor.empty());
   }
 
   /**
