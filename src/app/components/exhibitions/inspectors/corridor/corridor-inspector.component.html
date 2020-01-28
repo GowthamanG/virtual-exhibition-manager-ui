@@ -5,7 +5,7 @@
 
 <hr/>
 
-<h4 class="mat-h4">General properties</h4>
+<h4 class="mat-h4"><b>General properties</b></h4>
 
 
 <mat-form-field class="full-width">
@@ -31,18 +31,17 @@
         </mat-option>
     </mat-select>
 </mat-form-field>
-<p>{{corridor.ceiling}}</p>
 
-<h4 class="mat-h4">Corridor geometry</h4>
+<h4 class="mat-h4"><b>Corridor geometry</b></h4>
 
 <app-vector3f-input [vector]="corridor.position" [name]="'Position'"></app-vector3f-input>
 
 <app-vector3f-input [vector]="corridor.size" [name]="'Size'" [labels]="['Width', 'Height', 'Depth']"></app-vector3f-input>
 
-<h4 class="mat-h4">Entrypoint</h4>
+<h4 class="mat-h4"><b>Entrypoint</b></h4>
 <app-vector3f-input [vector]="corridor.entrypoint" [name]="'Entrypoint'" [show]="[true, false, true]" [labels]="['Entrypoint (x)', null, 'Entrypoint (y)']"></app-vector3f-input>
 
-<h4 class="mat-h4">Rooms to connect</h4>
+<h4 class="mat-h4"><b>Rooms to connect</b></h4>
 
 <mat-form-field class="full-width">
   <mat-select placeholder="Room 1" [(ngModel)]="corridor.connects[0]">
